@@ -77,100 +77,112 @@ public final class FTPPractice
         String username = null;
         String password = null;
 
-        int base = 0;
-        for (base = 0; base < args.length; base++)
-        {
-            if (args[base].equals("-s")) {
-                storeFile = true;
-            }
-            else if (args[base].equals("-a")) {
-                localActive = true;
-            }
-            else if (args[base].equals("-A")) {
-                username = "anonymous";
-                password = System.getProperty("user.name")+"@"+InetAddress.getLocalHost().getHostName();
-            }
-            else if (args[base].equals("-b")) {
-                binaryTransfer = true;
-            }
-            else if (args[base].equals("-c")) {
-                doCommand = args[++base];
-                minParams = 3;
-            }
-            else if (args[base].equals("-d")) {
-                mlsd = true;
-                minParams = 3;
-            }
-            else if (args[base].equals("-e")) {
-                useEpsvWithIPv4 = true;
-            }
-            else if (args[base].equals("-f")) {
-                feat = true;
-                minParams = 3;
-            }
-            else if (args[base].equals("-h")) {
-                hidden = true;
-            }
-            else if (args[base].equals("-k")) {
-                keepAliveTimeout = Long.parseLong(args[++base]);
-            }
-            else if (args[base].equals("-l")) {
-                listFiles = true;
-                minParams = 3;
-            }
-            else if (args[base].equals("-L")) {
-                lenient = true;
-            }
-            else if (args[base].equals("-n")) {
-                listNames = true;
-                minParams = 3;
-            }
-            else if (args[base].equals("-p")) {
-                protocol = args[++base];
-            }
-            else if (args[base].equals("-t")) {
-                mlst = true;
-                minParams = 3;
-            }
-            else if (args[base].equals("-w")) {
-                controlKeepAliveReplyTimeout = Integer.parseInt(args[++base]);
-            }
-            else if (args[base].equals("-T")) {
-                trustmgr = args[++base];
-            }
-            else if (args[base].equals("-PrH")) {
-                proxyHost = args[++base];
-                String parts[] = proxyHost.split(":");
-                if (parts.length == 2){
-                    proxyHost=parts[0];
-                    proxyPort=Integer.parseInt(parts[1]);
+        String specification = "";
+        String inUsername = "";
+        String inPassword = "";
+        String server = "";
+        String fileToRead = "";
+        String locationToPlace = "";
+        String line = null;
+        try {
+            FileReader fileReader =
+                    new FileReader("Config.txt");
+
+            // Always wrap FileReader in BufferedReader.
+            BufferedReader bufferedReader =
+                    new BufferedReader(fileReader);
+
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                String[] data = line.split(":");
+                if(line.startsWith("Specification:"))
+                {
+                    specification=data[1];
+                }
+                else if (line.startsWith("username:"))
+                {
+                    inUsername =data[1];
+                }
+                else if (line.startsWith("password:"))
+                {
+                    inPassword = data[1];
+                }
+                else if (line.startsWith("server:"))
+                {
+                    server = data[1];
+                }
+                else if (line.startsWith("fileToRead:"))
+                {
+                    fileToRead = data[1];
+                }
+                else if (line.startsWith("locationToPlace:"))
+                {
+                    locationToPlace = data[1];
                 }
             }
-            else if (args[base].equals("-PrU")) {
-                proxyUser = args[++base];
-            }
-            else if (args[base].equals("-PrP")) {
-                proxyPassword = args[++base];
-            }
-            else if (args[base].equals("-#")) {
-                printHash = true;
-            }
-            else {
-                break;
-            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
 
-        int remain = args.length - base;
+        if (specification.equals("-s")) {
+            storeFile = true;
+        } else if (specification.equals("-a")) {
+            localActive = true;
+        } else if (specification.equals("-A")) {
+            username = "anonymous";
+            password = System.getProperty("user.name") + "@" + InetAddress.getLocalHost().getHostName();
+        } else if (specification.equals("-b")) {
+            binaryTransfer = true;
+        } else if (specification.equals("-c")) {
+            doCommand = server;
+            minParams = 3;
+        } else if (specification.equals("-d")) {
+            mlsd = true;
+            minParams = 3;
+        } else if (specification.equals("-e")) {
+            useEpsvWithIPv4 = true;
+        } else if (specification.equals("-f")) {
+            feat = true;
+            minParams = 3;
+        } else if (specification.equals("-h")) {
+            hidden = true;
+        }  else if (specification.equals("-l")) {
+            listFiles = true;
+            minParams = 3;
+        } else if (specification.equals("-L")) {
+            lenient = true;
+        } else if (specification.equals("-n")) {
+            listNames = true;
+            minParams = 3;
+        } else if (specification.equals("-p")) {
+            protocol = server;
+        } else if (specification.equals("-t")) {
+            mlst = true;
+            minParams = 3;
+        }
+          else if (specification.equals("-PrH")) {
+            proxyHost = server;
+        } else if (specification.equals("-PrU")) {
+            proxyUser = inUsername;
+        } else if (specification.equals("-PrP")) {
+            proxyPassword = inPassword;
+        } else if (specification.equals("-#")) {
+            printHash = true;
+        }
+
         if (username != null) {
             minParams -= 2;
         }
+        /*
         if (remain < minParams) // server, user, pass, remote, local [protocol]
         {
             System.err.println(USAGE);
             System.exit(1);
         }
-
-        String server = args[base++];
+        */
+        String theServer = server;
         int port = 0;
         String parts[] = server.split(":");
         if (parts.length == 2){
@@ -178,20 +190,13 @@ public final class FTPPractice
             port=Integer.parseInt(parts[1]);
         }
         if (username == null) {
-            username = args[base++];
-            password = args[base++];
+            username = inUsername;
+            password = inPassword;
         }
 
-        String remote = null;
-        if (args.length - base > 0)
-        {
-            remote = args[base++];
-        }
+        String remote = locationToPlace;
 
-        String local = null;
-        if (args.length - base > 0) {
-            local = args[base++];
-        }
+        String local = fileToRead;
 
         final FTPClient ftp;
         if (protocol == null ) {
@@ -315,7 +320,6 @@ public final class FTPPractice
             input.close();
 
             ftp.setUseEPSVwithIPv4(useEpsvWithIPv4);
-            createPropertyFile();
             deleteFile(ftp);
 
             if (storeFile)
@@ -480,6 +484,8 @@ public final class FTPPractice
     }
 
     // creates the property file and puts ftp information into a hash-table
+    //currently inactive
+    /*
     public static void createPropertyFile()
     {
         Properties prop = new Properties();
@@ -506,6 +512,7 @@ public final class FTPPractice
         prop.setProperty("file names", "eula.1036.txt");
         prop.setProperty("output directory", "C://users/kasi");
     }
+    */
 
     private static CopyStreamListener createListener(){
         return new CopyStreamListener(){

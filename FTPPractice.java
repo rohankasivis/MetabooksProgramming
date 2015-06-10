@@ -92,32 +92,42 @@ public final class FTPPractice
             BufferedReader bufferedReader =
                     new BufferedReader(fileReader);
 
+            System.out.println("Hello World");
             while ((line = bufferedReader.readLine()) != null)
             {
                 String[] data = line.split(":");
-                if(line.startsWith("Specification:"))
+
+                if(line.startsWith("Specification: "))
                 {
-                    specification=data[1];
+                    if(data[1] != null)
+                        specification=data[1];
+
+                    System.out.println(specification);
                 }
                 else if (line.startsWith("username:"))
                 {
                     inUsername =data[1];
+                    System.out.println(inUsername);
                 }
                 else if (line.startsWith("password:"))
                 {
                     inPassword = data[1];
+                    System.out.println(inPassword);
                 }
                 else if (line.startsWith("server:"))
                 {
                     server = data[1];
+                    System.out.println(server);
                 }
                 else if (line.startsWith("fileToRead:"))
                 {
                     fileToRead = data[1];
+                    System.out.println(fileToRead);
                 }
                 else if (line.startsWith("locationToPlace:"))
                 {
-                    locationToPlace = data[1];
+                    locationToPlace = data[1] + ":" + data[2];
+                    System.out.println(locationToPlace);
                 }
             }
         }

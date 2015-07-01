@@ -1,11 +1,11 @@
 import org.joda.time.*;
-
 import java.io.File;
-import java.util.Date;
+import java.net.UnknownHostException;
 
 public class DocumentStream implements Runnable
 {
     private DateTime time;
+    private File currFile;
 
     public DocumentStream(DateTime time)
     {
@@ -30,7 +30,20 @@ public class DocumentStream implements Runnable
         return listOfFiles;
     }
 
-    public String returnFileName(DateTime time)
+    public boolean fileExists(File file)
+    {
+        String fileName = returnFileName();
+
+        if(file != null)
+        {
+            if(file.getName().equals(fileName))
+                return true;
+        }
+
+        return false;
+    }
+
+    public String returnFileName()
     {
         int year = time.getYear();
         int month = time.getMonthOfYear();
@@ -41,44 +54,44 @@ public class DocumentStream implements Runnable
 
     public void run()
     {
-        File [] listOfFiles = readFiles();
-        for(int j = 0; j < listOfFiles.length; j++)
-        {
-            if(listOfFiles[j] != null)
-            {
-                long time = listOfFiles[j].lastModified();
-                DateTime fileTime = new DateTime(time);
-                int fileYear = fileTime.getYear();
-                int setYear = this.time.getYear();
-                int fileMonth = fileTime.getMonthOfYear();
-                int setMonth = this.time.getMonthOfYear();
-                int fileDay = fileTime.getDayOfMonth();
-                int setDay = this.time.getDayOfMonth();
-
-                if(fileYear > setYear)
-                    ftpFile(listOfFiles[j]);
-                else if(fileYear == setYear)
-                    if(fileMonth > setMonth)
-                        ftpFile(listOfFiles[j]);
-                    else if(fileMonth == setMonth)
-                        if(fileDay > setDay)
-                            ftpFile(listOfFiles[j]);
-                        else
-                            logFile(listOfFiles[j]);
-                    else
-                        logFile(listOfFiles[j]);
-                else
-                    logFile(listOfFiles[j]);
-            }
-        }
+        fileExists(currFile);
     }
 
-    private void ftpFile(File file)
+    public boolean isAfterDate(File file)
     {
+        if(file != null)
+        {
+            long time = file.lastModified();
+            DateTime fileTime = new DateTime(time);
+            int fileYear = fileTime.getYear();
+            int setYear = this.time.getYear();
+            int fileMonth = fileTime.getMonthOfYear();
+            int setMonth = this.time.getMonthOfYear();
+            int fileDay = fileTime.getDayOfMonth();
+            int setDay = this.time.getDayOfMonth();
 
+            if(fileYear > setYear)
+                return true;
+            else if(fileYear == setYear)
+                if(fileMonth > setMonth)
+                    return true;
+                else if(fileMonth == setMonth)
+                    return fileDay > setDay;
+                else
+                    return false;
+            else
+                return false;
+        }
+        else
+            return false;
     }
 
-    private void logFile(File file)
+    public void ftpFile() throws UnknownHostException
+    {
+        FTPTheClient.ftpFile(returnFileName());
+    }
+
+    public void logFile()
     {
 
     }

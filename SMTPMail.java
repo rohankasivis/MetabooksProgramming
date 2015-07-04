@@ -8,13 +8,10 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SMTPMail {
-
-    public static void main(String[] args) {
-
-        final String username = "guychill197@gmail.com";
-        final String password = "gtarocks";
-
+public class SMTPMail
+{
+    public static void sendMail(final String username, final String password, String recipient, String sender, String messageInfo, String subject)
+    {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -32,22 +29,22 @@ public class SMTPMail {
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("guychill197@gmail.com"));
+            message.setFrom(new InternetAddress(sender));
             message.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse("guychill197@gmail.com"));
-            message.setSubject("Testing Subject");
-            message.setText("Dear Mail Crawler,"
-                    + "\n\n No spam to my email, please!");
+                    InternetAddress.parse(recipient));
+            message.setSubject(subject);
+            message.setText(messageInfo);
 
             Transport transport = session.getTransport("smtp");
             transport.connect("smtp.gmail.com", username, password);
             System.out.println("Transport: "+transport.toString());
             transport.sendMessage(message, message.getAllRecipients());
-           // Transport.send(message);
+            // Transport.send(message);
 
             System.out.println("Done");
 
-        } catch (MessagingException e) {
+        } catch (MessagingException e)
+        {
             throw new RuntimeException(e);
         }
     }

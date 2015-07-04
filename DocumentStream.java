@@ -2,7 +2,6 @@ import org.joda.time.*;
 
 import java.io.*;
 import java.net.UnknownHostException;
-import java.util.Date;
 
 public class DocumentStream implements Runnable
 {
@@ -67,10 +66,20 @@ public class DocumentStream implements Runnable
 
         File [] listOfFiles = stream.readFiles();
 
-        while (curr.getHourOfDay() != 6)
+        int hoursLeft = 0;
+        int minutesLeft = 0;
+
+        if(curr.getMinuteOfHour() != 0)
         {
-            Thread.sleep(60000);
+            minutesLeft = 60 - curr.getMinuteOfHour();
         }
+
+        if(curr.getHourOfDay() > 6)
+            hoursLeft = 24 - curr.getHourOfDay() + 6;
+        else
+            hoursLeft = 6 - curr.getHourOfDay();
+
+        Thread.sleep(3600000 * hoursLeft + 3600000 * minutesLeft / 60);
 
         stream.ftpFile();
 
@@ -91,7 +100,7 @@ public class DocumentStream implements Runnable
                 else
                 {
                     int numTimesChecked = 1;
-                    while (numTimesChecked <= 6 && !stream.fileExists(listOfFiles[j]))
+                    while (numTimesChecked <= 3 && !stream.fileExists(listOfFiles[j]))
                     {
                         if (stream.fileExists(listOfFiles[j]))
                             stream.readFile(listOfFiles[j]);
@@ -100,17 +109,32 @@ public class DocumentStream implements Runnable
                     }
 
                     if (!stream.fileExists(listOfFiles[j]))
+                    {
                         stream.logFile(listOfFiles[j]);
+                        SMTPMail.sendMail("guychill168@gmail.com", "gtarocks", "guychill168@gmail.com", "guychill168@gmail.com", "ftp failed to open", "Test result");
+                    }
                 }
             }
         }
-
     }
 
     public void run()
     {
         fileExists(currFile);
-        //processFiles();
+        try {
+            processFiles();
+        }catch (UnknownHostException e)
+        {
+            System.exit(1);
+        }
+        catch (IOException e)
+        {
+            System.exit(1);
+        }
+        catch (InterruptedException e)
+        {
+            System.exit(1);
+        }
     }
 
     public boolean hasReadFile(DateTime time)

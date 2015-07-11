@@ -33,9 +33,9 @@ public class DocumentStream implements Runnable
 
     // This reads all of the files in the FTPFiles server, and also parses the log file to determine
     // the last time files were read.
-    public File [] readFiles()
+    public File [] readFiles() throws IOException
     {
-        File folder = new File("C:/FTPFiles");
+        File folder = new File("C:/FTPFilesTesting");
         File[] list = folder.listFiles();
         listOfFiles = new File[list.length];
         hasRead = new boolean[list.length];
@@ -53,8 +53,17 @@ public class DocumentStream implements Runnable
             {
                 listOfFiles[pos] = list[i];
                 pos++;
+
+                long time = list[i].lastModified();
+                if(isAfterLastTimeRead(new DateTime(time), month, day, year))
+                {
+                    readFile(list[i]);
+                }
             }
         }
+
+        // once done reading through the files, print the current date: this indicates as of now the last time the files have been read
+        writer.println("Last time read: " + DateTime.now().getMonthOfYear() + "-" + DateTime.now().getDayOfMonth() + "-" + DateTime.now().getYear());
 
         return listOfFiles;
     }
@@ -77,24 +86,38 @@ public class DocumentStream implements Runnable
         }
 
         // parses the string which contains the last date modified
-        lastDateRead = lastDateRead.substring(16);
-        String values[] = new String[3];
-        values = lastDateRead.split("\\-");
-        int month = Integer.parseInt(values[0]);
-        int day = Integer.parseInt(values[1]);
-        int year = Integer.parseInt(values[2]);
-        int [] date = new int[3];
-        date[0] = month; date[1] = day; date[2] = year;
-        return date;
+        if(lastDateRead.length() == 0)
+            return new int[3];
+        else
+        {
+            lastDateRead = lastDateRead.substring(16);
+            String values[] = new String[3];
+            values = lastDateRead.split("\\-");
+            int month = Integer.parseInt(values[0]);
+            int day = Integer.parseInt(values[1]);
+            int year = Integer.parseInt(values[2]);
+            int[] date = new int[3];
+            date[0] = month;
+            date[1] = day;
+            date[2] = year;
+
+            return date;
+        }
     }
 
     // checks to see whether the file passed in exists or not
-    public boolean fileExists(File file)
+    public boolean fileExists() throws IOException
     {
-        String fileName = fileName();
-
-        if(file != null)
-            return file.getName().equals(fileName);
+        listOfFiles = readFiles();
+        if(listOfFiles != null && listOfFiles.length > 0)
+        {
+            for(int j = 0; j < listOfFiles.length; j++)
+            {
+                if(listOfFiles[j].getName().equals(fileName()))
+                    return true;
+            }
+            return false;
+        }
         return false;
     }
 
@@ -122,44 +145,37 @@ public class DocumentStream implements Runnable
             Thread.sleep(36000000);
         }
 
-        File [] listOfFiles = stream.readFiles();
+        listOfFiles = stream.readFiles();
 
-        // loops through the list of files and handles the files appropriately
-        for(int j = 0; j < listOfFiles.length; j++)
-        {
-            if((listOfFiles[j].lastModified() == DateTime.now().getMillis()))
-                return;
-
-            if(listOfFiles[j] != null)
-                handleFile(stream, j);
-        }
-
-        // once done reading through the files, print the current date: this indicates as of now the last time the files have been read
-        writer.println("Last time read: " + curr.getMonthOfYear() + "-" + curr.getDayOfMonth() + "-" + curr.getYear());
+        handleFile(stream);
     }
 
     // This method is used to handle the file and log/send emails appropriately
-    public void handleFile(DocumentStream stream, int position) throws IOException, InterruptedException
+    public void handleFile(DocumentStream stream) throws IOException, InterruptedException
     {
         // if the file exists, then read the file
-        if (stream.fileExists(listOfFiles[position]))
-            stream.readFile(listOfFiles[position]);
+        if (stream.fileExists())
+            stream.readFile(new File("C:/FTPFilesTesting/" + fileName()));
         else
         {
             // otherwise, wait for 3 hours and see if the file will be updated by then
             int numTimesChecked = 1;
-            while (numTimesChecked <= 3 && !stream.fileExists(listOfFiles[position]))
+            while (numTimesChecked <= 3 && !stream.fileExists())
             {
-                if (stream.fileExists(listOfFiles[position]))
-                    stream.readFile(listOfFiles[position]);
+                if (stream.fileExists())
+                {
+                    stream.readFile(new File("C:/FTPFilesTesting/" + fileName()));
+                    return;
+                }
                 else
                     Thread.sleep(3600000);
+                numTimesChecked++;
             }
 
             // if it still does not exist, then log the file and send an email stating that the test failed
-            if (!stream.fileExists(listOfFiles[position]))
+            if (!stream.fileExists())
             {
-                stream.logFile(listOfFiles[position]);
+                stream.logFile(fileName());
                 SMTPMail.sendMail("guychill168@gmail.com", "gtarocks", "guychill168@gmail.com", "guychill168@gmail.com", "ftp failed to open", "Test result");
             }
         }
@@ -213,6 +229,25 @@ public class DocumentStream implements Runnable
         return false;
     }
 
+    public boolean isAfterLastTimeRead(DateTime newTime, int month, int day, int year)
+    {
+        int fileYear = newTime.getYear();
+        int fileMonth = newTime.getMonthOfYear();
+        int fileDay = newTime.getDayOfMonth();
+
+        if(fileYear > year)
+            return true;
+        else if(fileYear == year)
+            if(fileMonth > month)
+                return true;
+            else if(fileMonth == month)
+                return fileDay > day;
+            else
+                return false;
+        else
+            return false;
+    }
+
     // this method checks to see if the current date is after the date specified by the constructor
     // as an indicator for reading the files
     public boolean isAfterDate(DateTime newTime)
@@ -262,9 +297,9 @@ public class DocumentStream implements Runnable
     }
 
     // print an error message in the log file that the specific file was not found on the specific date it was searched
-    public void logFile(File file)
+    public void logFile(String fileName)
     {
         DateTime curr = DateTime.now();
-        writer.println("File " + file.getName() + " was not found on " + curr.getMonthOfYear() + "-" + curr.getDayOfMonth() + "-" + curr.getYear());
+        writer.println("File " + fileName + " was not found on " + curr.getMonthOfYear() + "-" + curr.getDayOfMonth() + "-" + curr.getYear());
     }
 }

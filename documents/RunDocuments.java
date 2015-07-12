@@ -1,5 +1,7 @@
 package documents;
 
+import mockclock.AccurateTime;
+import mockclock.Clock;
 import org.joda.time.*;
 
 import java.io.IOException;
@@ -9,6 +11,7 @@ public class RunDocuments
 {
     public static void main(String [] args) throws InterruptedException, UnknownHostException, IOException
     {
-        (new Thread(new DocumentStream(DateTime.now()))).start();
+        Clock clock = new AccurateTime();
+        (new Thread(new DocumentStream(clock))).start();
     }
 }

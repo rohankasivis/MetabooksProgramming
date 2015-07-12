@@ -2,6 +2,8 @@ package documents;
 
 import ftpclasses.FTPTheClient;
 import mailutilities.SMTPMail;
+import mockclock.AccurateTime;
+import mockclock.Clock;
 import org.joda.time.*;
 import java.util.Scanner;
 
@@ -12,14 +14,14 @@ import java.net.UnknownHostException;
 // which files are read and what still needs to be done.
 public class DocumentStream implements Runnable
 {
-    private DateTime time;
+    private Clock time;
     private boolean [] hasRead;
     private File [] listOfFiles;
     private PrintWriter writer;
 
     // This is the constructor for the class, which takes a DateTime that will
     // represent the time that run is based on
-    public DocumentStream(DateTime time)
+    public DocumentStream(Clock time)
     {
         this.time = time;
         try
@@ -134,9 +136,9 @@ public class DocumentStream implements Runnable
     // Processes all of the files and ftps the current file at 6 am
     public void processFiles() throws InterruptedException, IOException
     {
-        DateTime curr = DateTime.now();
+        Clock curr = new AccurateTime();
         DocumentStream stream = new DocumentStream(curr);
-        waitTillSix(curr);
+        waitTillSix(DateTime.now());
         stream.ftpFile();
 
         // if the date passed in is later than the current date, wait until the appropriate time

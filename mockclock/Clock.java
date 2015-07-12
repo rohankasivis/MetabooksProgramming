@@ -1,6 +1,6 @@
 package mockclock;
 
-public interface MockDateTime
+public interface Clock
 {
     int getYear();
     int getDayOfMonth();

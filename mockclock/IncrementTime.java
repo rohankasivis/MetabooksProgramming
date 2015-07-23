@@ -3,7 +3,7 @@ package mockclock;
 import org.junit.*;
 import org.joda.time.DateTime;
 
-public class DecrementTime implements Clock
+public class IncrementTime implements Clock
 {
     private int year;
     private int month;
@@ -12,14 +12,14 @@ public class DecrementTime implements Clock
     private int minutes;
     private int hours;
 
-    public DecrementTime()
+    public IncrementTime()
     {
         year = 0;
         month = 0;
         day = 0;
     }
 
-    public DecrementTime(int year, int month, int day, int seconds, int minutes, int hours)
+    public IncrementTime(int year, int month, int day, int seconds, int minutes, int hours)
     {
         this.year = year;
         this.month = month;
@@ -31,32 +31,32 @@ public class DecrementTime implements Clock
 
     public int getYear()
     {
-        return DateTime.now().getYear() - year;
+        return DateTime.now().getYear() + year;
     }
 
     public int getDayOfMonth()
     {
-        return DateTime.now().getDayOfMonth() - day;
+        return DateTime.now().getDayOfMonth() + day;
     }
 
     public int getMonthOfYear()
     {
-        return DateTime.now().getMonthOfYear() - month;
+        return DateTime.now().getMonthOfYear() + month;
     }
 
     public int getMinutes()
     {
-        return DateTime.now().getMinuteOfHour() - minutes;
+        return DateTime.now().getMinuteOfHour() + minutes;
     }
 
     public int getHour()
     {
-        return DateTime.now().getHourOfDay() - hours;
+        return DateTime.now().getHourOfDay() + hours;
     }
 
     public int getSeconds()
     {
-        return DateTime.now().getSecondOfMinute() - seconds;
+        return DateTime.now().getSecondOfMinute() + seconds;
     }
 
     public void waitTill(int hour, int minute, int seconds) throws InterruptedException

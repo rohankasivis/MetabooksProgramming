@@ -1,4 +1,4 @@
-package mailutilities;
+package documentsMail;
 
 import com.sun.mail.pop3.POP3SSLStore;
 

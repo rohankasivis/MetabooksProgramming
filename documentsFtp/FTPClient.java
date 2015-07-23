@@ -1,4 +1,4 @@
-package ftpclasses;/*
+package documentsFtp;/*
 * This program is used to read and print out
 * on the server using the apache FTP client.
 * */
@@ -6,12 +6,10 @@ package ftpclasses;/*
 import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Properties;
 import java.util.Scanner;
 
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPHTTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPConnectionClosedException;
@@ -30,7 +28,7 @@ import org.apache.commons.net.util.TrustManagerUtils;
  * If the -b flag is used, a binary transfer is assumed (default is ASCII).
  * See below for further options.
  */
-public final class FTPTheClient implements IFTPClient
+public final class FTPClient implements IFTPClient
 {
     public static final String USAGE =
             "Usage: ftp [options] <hostname> <username> <password> [<remote file> [<local file>]]\n" +
@@ -470,7 +468,7 @@ public final class FTPTheClient implements IFTPClient
     }
 
     // This method is used to delete a specific file.
-    public void deleteFile(FTPClient ftp)
+    public void deleteFile(org.apache.commons.net.ftp.FTPClient ftp)
     {
         try
         {

@@ -1,4 +1,4 @@
-package ftpclasses;
+package documentsFtp;
 
 import java.net.UnknownHostException;
 

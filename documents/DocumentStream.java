@@ -1,7 +1,7 @@
 package documents;
 
-import ftpclasses.FTPTheClient;
-import mailutilities.SMTPMail;
+import documentsFtp.FTPClient;
+import documentsMail.SMTPMail;
 import mockclock.AccurateTime;
 import mockclock.Clock;
 import org.joda.time.*;
@@ -57,7 +57,7 @@ public class DocumentStream implements Runnable
                 pos++;
 
                 long time = list[i].lastModified();
-                if(isAfterLastTimeRead(new DateTime(time), month, day, year))
+                if(this.time.getMilliseconds() > time)
                 {
                     readFile(list[i]);
                 }
@@ -136,37 +136,37 @@ public class DocumentStream implements Runnable
     // Processes all of the files and ftps the current file at 6 am
     public void processFiles() throws InterruptedException, IOException
     {
-        Clock curr = new AccurateTime();
-        DocumentStream stream = new DocumentStream(curr);
-        waitTillSix(DateTime.now());
-        stream.ftpFile();
+        time.waitTill(6, 0, 0);
+        ftpFile();
 
+        /*
         // if the date passed in is later than the current date, wait until the appropriate time
-        while(!stream.isAfterDate(DateTime.now()))
+        while(!isAfterDate(DateTime.now()))
         {
             Thread.sleep(36000000);
         }
+        */
 
-        listOfFiles = stream.readFiles();
+        listOfFiles = readFiles();
 
-        handleFile(stream);
+        handleFile();
     }
 
     // This method is used to handle the file and log/send emails appropriately
-    public void handleFile(DocumentStream stream) throws IOException, InterruptedException
+    public void handleFile() throws IOException, InterruptedException
     {
         // if the file exists, then read the file
-        if (stream.fileExists())
-            stream.readFile(new File("C:/FTPFilesTesting/" + fileName()));
+        if (fileExists())
+            readFile(new File("C:/FTPFilesTesting/" + fileName()));
         else
         {
             // otherwise, wait for 3 hours and see if the file will be updated by then
             int numTimesChecked = 1;
-            while (numTimesChecked <= 3 && !stream.fileExists())
+            while (numTimesChecked <= 3 && !fileExists())
             {
-                if (stream.fileExists())
+                if (fileExists())
                 {
-                    stream.readFile(new File("C:/FTPFilesTesting/" + fileName()));
+                    readFile(new File("C:/FTPFilesTesting/" + fileName()));
                     return;
                 }
                 else
@@ -175,30 +175,12 @@ public class DocumentStream implements Runnable
             }
 
             // if it still does not exist, then log the file and send an email stating that the test failed
-            if (!stream.fileExists())
+            if (!fileExists())
             {
-                stream.logFile(fileName());
+                logFile(fileName());
                 SMTPMail.sendMail("guychill168@gmail.com", "gtarocks", "guychill168@gmail.com", "guychill168@gmail.com", "ftp failed to open", "Test result");
             }
         }
-    }
-
-    // uses Thread to wait until 6 am of the specific day
-    public void waitTillSix(DateTime curr) throws InterruptedException
-    {
-        int hoursLeft = 0;
-        int minutesLeft = 0;
-
-        // this part of the method calculates the remaining time from the current time until 6 am
-        if(curr.getMinuteOfHour() != 0)
-            minutesLeft = 60 - curr.getMinuteOfHour();
-
-        if(curr.getHourOfDay() > 6)
-            hoursLeft = 24 - curr.getHourOfDay() + 6;
-        else
-            hoursLeft = 6 - curr.getHourOfDay();
-
-        Thread.sleep(3600000 * hoursLeft + 3600000 * minutesLeft / 60);
     }
 
     // the run method of this class which calls processfiles, the key method of the class
@@ -231,25 +213,7 @@ public class DocumentStream implements Runnable
         return false;
     }
 
-    public boolean isAfterLastTimeRead(DateTime newTime, int month, int day, int year)
-    {
-        int fileYear = newTime.getYear();
-        int fileMonth = newTime.getMonthOfYear();
-        int fileDay = newTime.getDayOfMonth();
-
-        if(fileYear > year)
-            return true;
-        else if(fileYear == year)
-            if(fileMonth > month)
-                return true;
-            else if(fileMonth == month)
-                return fileDay > day;
-            else
-                return false;
-        else
-            return false;
-    }
-
+    /*
     // this method checks to see if the current date is after the date specified by the constructor
     // as an indicator for reading the files
     public boolean isAfterDate(DateTime newTime)
@@ -273,6 +237,7 @@ public class DocumentStream implements Runnable
         else
             return false;
     }
+    */
 
     // This method is used to read the file, and once it does this, it prints out the date the specific file was read
     public void readFile(File file) throws IOException
@@ -285,8 +250,7 @@ public class DocumentStream implements Runnable
         FileReader fileToRead = new FileReader(file);
         BufferedReader reader = new BufferedReader(fileToRead);
 
-        DateTime curr = DateTime.now();
-        writer.println(file.getName() + ": Read on: " + curr.getMonthOfYear() + "-" + curr.getDayOfMonth() + "-" + curr.getYear());
+        writer.println(file.getName() + ": Read on: " + time.getMonthOfYear() + "-" + time.getDayOfMonth() + "-" + time.getYear());
 
         reader.close();
     }
@@ -294,7 +258,7 @@ public class DocumentStream implements Runnable
     // uses ftpclient to ftp the file at 6 am
     public void ftpFile() throws UnknownHostException
     {
-        FTPTheClient client = new FTPTheClient();
+        FTPClient client = new FTPClient();
         client.ftpFile(fileName());
     }
 

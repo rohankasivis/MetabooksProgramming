@@ -1,5 +1,6 @@
-package ftpclasses;
+package documentsFtp;
 
+import documents.OpenFile;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamListener;
 

@@ -1,11 +1,9 @@
-package test;
+package documentstest;
 
 import documents.DocumentStream;
-import junit.framework.Assert;
 import mockclock.*;
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,9 +29,9 @@ public class documentTest
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 {new AccurateTime()},
-                {new DecrementTime(0, 0, 5)},
-                {new IncrementDays(0, 0, 5)},
-                {new KeepFixedTime(2014, 4, 5)}
+                {new DecrementTime(0, 0, 5, 10, 14, 2)},
+                {new IncrementTime(0, 0, 5, 12, 29, 14)},
+                {new KeepFixedTime(2014, 4, 5, 19, 0, 12)}
         });
     }
 

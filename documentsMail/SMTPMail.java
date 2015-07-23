@@ -1,4 +1,4 @@
-package mailutilities;
+package documentsMail;
 
 import java.util.Properties;
 

@@ -1,3 +1,4 @@
+/*
 package mockclock;
 
 import org.junit.*;
@@ -68,3 +69,4 @@ public class IncrementTime implements Clock
         return 0;
     }
 }
+*/

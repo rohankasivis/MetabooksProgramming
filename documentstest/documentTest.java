@@ -29,9 +29,7 @@ public class documentTest
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 {new AccurateTime()},
-                {new DecrementTime(0, 0, 5, 10, 14, 2)},
-                {new IncrementTime(0, 0, 5, 12, 29, 14)},
-                {new KeepFixedTime(2014, 4, 5, 19, 0, 12)}
+                {new fakeClock(14, 39, 12)}
         });
     }
 
@@ -39,19 +37,23 @@ public class documentTest
     public void set_up() throws IOException, InterruptedException
     {
         stream.processFiles();
+        assertEquals(true, stream.fileExists());
+        System.out.println("@Test - newly created file does exist in the server");
+        assertEquals(true, DateTime.now().getHourOfDay() == 6);
+        System.out.println("@Test - file is put into ftp at 6 a.m.");
     }
 
+    /*
     @Test
     public void test_ftp() throws IOException
     {
-        assertEquals(true, stream.fileExists());
-        System.out.println("@Test - newly created file does exist in the server");
+
     }
 
     @Test
     public void test_time()
     {
-        assertEquals(true, DateTime.now().getHourOfDay() == 6);
-        System.out.println("@Test - file is put into ftp at 6 a.m.");
+
     }
+    */
 }

@@ -1,3 +1,4 @@
+/*
 package mockclock;
 
 import org.junit.*;
@@ -71,3 +72,4 @@ public class KeepFixedTime implements Clock
         return 0;
     }
 }
+*/

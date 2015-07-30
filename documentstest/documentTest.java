@@ -28,22 +28,21 @@ public class documentTest
     @Parameters
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
-                {new AccurateTime()},
                 {new fakeClock(14, 39, 12)}
         });
     }
 
-    @Before
+    @Test
     public void set_up() throws IOException, InterruptedException
     {
         stream.processFiles();
         assertEquals(true, stream.fileExists());
         System.out.println("@Test - newly created file does exist in the server");
-        assertEquals(true, DateTime.now().getHourOfDay() == 6);
+        clock.waitTill(6, 0, 0);
+        assertEquals(true, clock.getHour() == 6);
         System.out.println("@Test - file is put into ftp at 6 a.m.");
     }
 
-    /*
     @Test
     public void test_ftp() throws IOException
     {
@@ -55,5 +54,4 @@ public class documentTest
     {
 
     }
-    */
 }

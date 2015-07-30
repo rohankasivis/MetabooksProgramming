@@ -11,7 +11,7 @@ public class DocumentServer
 {
     public static void main(String [] args) throws InterruptedException, UnknownHostException, IOException
     {
-        Clock clock = new AccurateTime();
+        AccurateTime clock = new AccurateTime();
         (new Thread(new DocumentStream(clock))).start();
     }
 }

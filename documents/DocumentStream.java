@@ -19,6 +19,38 @@ public class DocumentStream implements Runnable
     private File [] listOfFiles;
     private PrintWriter writer;
 
+    public Scanner openToRead(String inputFileName)
+    {
+        Scanner input = new Scanner(System.in);
+        File file = new File(inputFileName);
+
+        try
+        {
+            input = new Scanner(file);
+        }catch (FileNotFoundException e)
+        {
+            System.out.println("File not found.");
+            System.exit(1);
+        }
+
+        return input;
+    }
+
+    public PrintWriter openToWrite(String outputFileName)
+    {
+        PrintWriter outFile = null;
+        try
+        {
+            outFile = new PrintWriter(new File(outputFileName));
+        }catch (IOException e)
+        {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        return outFile;
+    }
+
     // This is the constructor for the class, which takes a DateTime that will
     // represent the time that run is based on
     public DocumentStream(Clock time)
@@ -77,7 +109,7 @@ public class DocumentStream implements Runnable
         String lastDateRead = "";
 
         // uses Scanner to open the parse file and then determine the date
-        Scanner console = OpenFile.openToRead("filedata.txt");
+        Scanner console = openToRead("filedata.txt");
         while (console.hasNext())
         {
             String line = console.nextLine();

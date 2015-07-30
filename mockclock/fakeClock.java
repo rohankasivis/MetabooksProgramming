@@ -1,6 +1,7 @@
 package mockclock;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 
 public class fakeClock implements Clock
 {
@@ -38,5 +39,30 @@ public class fakeClock implements Clock
     public String getTime()
     {
         return getHour() + ":" + getMinutes() + "." + getSeconds();
+    }
+
+    public void fixTime(long millis)
+    {
+        DateTimeUtils.setCurrentMillisFixed(millis);
+    }
+
+    public int getDayOfMonth()
+    {
+        return DateTime.now().getDayOfMonth();
+    }
+
+    public int getMonthOfYear()
+    {
+        return DateTime.now().getMonthOfYear();
+    }
+
+    public int getYear()
+    {
+        return DateTime.now().getYear();
+    }
+
+    public long getMilliseconds()
+    {
+        return DateTime.now().getMillis();
     }
 }

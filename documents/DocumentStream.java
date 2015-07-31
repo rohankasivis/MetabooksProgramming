@@ -1,5 +1,6 @@
 package documents;
 
+import OpenFile.OpenFile;
 import documentsFtp.FTPClient;
 import documentsMail.SMTPMail;
 import mockclock.AccurateTime;
@@ -18,38 +19,6 @@ public class DocumentStream implements Runnable
     private boolean [] hasRead;
     private File [] listOfFiles;
     private PrintWriter writer;
-
-    public Scanner openToRead(String inputFileName)
-    {
-        Scanner input = new Scanner(System.in);
-        File file = new File(inputFileName);
-
-        try
-        {
-            input = new Scanner(file);
-        }catch (FileNotFoundException e)
-        {
-            System.out.println("File not found.");
-            System.exit(1);
-        }
-
-        return input;
-    }
-
-    public PrintWriter openToWrite(String outputFileName)
-    {
-        PrintWriter outFile = null;
-        try
-        {
-            outFile = new PrintWriter(new File(outputFileName));
-        }catch (IOException e)
-        {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        return outFile;
-    }
 
     // This is the constructor for the class, which takes a DateTime that will
     // represent the time that run is based on
@@ -109,7 +78,7 @@ public class DocumentStream implements Runnable
         String lastDateRead = "";
 
         // uses Scanner to open the parse file and then determine the date
-        Scanner console = openToRead("filedata.txt");
+        Scanner console = OpenFile.openToRead("filedata.txt");
         while (console.hasNext())
         {
             String line = console.nextLine();
@@ -202,7 +171,7 @@ public class DocumentStream implements Runnable
                     return;
                 }
                 else
-                    Thread.sleep(3600000);
+                    time.waitTill(time.getHour() + 1, time.getMinutes(), time.getSeconds());
                 numTimesChecked++;
             }
 
@@ -244,32 +213,6 @@ public class DocumentStream implements Runnable
         }
         return false;
     }
-
-    /*
-    // this method checks to see if the current date is after the date specified by the constructor
-    // as an indicator for reading the files
-    public boolean isAfterDate(DateTime newTime)
-    {
-        int fileYear = newTime.getYear();
-        int setYear = this.time.getYear();
-        int fileMonth = newTime.getMonthOfYear();
-        int setMonth = this.time.getMonthOfYear();
-        int fileDay = newTime.getDayOfMonth();
-        int setDay = this.time.getDayOfMonth();
-
-        if(fileYear > setYear)
-            return true;
-        else if(fileYear == setYear)
-            if(fileMonth > setMonth)
-                return true;
-            else if(fileMonth == setMonth)
-                return fileDay > setDay;
-            else
-                return false;
-        else
-            return false;
-    }
-    */
 
     // This method is used to read the file, and once it does this, it prints out the date the specific file was read
     public void readFile(File file) throws IOException

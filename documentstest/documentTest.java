@@ -57,19 +57,31 @@ public class documentTest
     }
 
     @Test
-    public void test_file_exists() throws UnknownHostException, IOException
+    public void test_file_exists_local() throws UnknownHostException, IOException
     {
-        stream.ftpFile();
-        assertEquals(stream.fileExists(), true);
+        stream.createFile();
+        assertEquals(true, stream.fileExistsLocal());
+        System.out.println("@Test - The newly created file exists within the local server.");
     }
 
+    @Test
+    public void test_file_exists_FTP() throws UnknownHostException, IOException
+    {
+        stream.createFile();
+        stream.ftpFile();
+        assertEquals(true, stream.fileExistsFTP());
+        System.out.println("@Test - The newly created file exists within the ftp server.");
+    }
+
+    /*
     @Test
     public void set_up() throws IOException, InterruptedException
     {
         stream.processFiles();
-        assertEquals(true, stream.fileExists());
+        assertEquals(true, stream.fileExistsFTP());
         System.out.println("@Test - newly created file does exist in the server");
         assertEquals(true, clock.getHour() == 6);
         System.out.println("@Test - file is put into ftp at 6 a.m.");
     }
+    */
 }

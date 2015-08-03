@@ -2,10 +2,15 @@ package documents;
 
 import OpenFile.OpenFile;
 import documentsFtp.FTPClient;
+import documentsFtp.FTPFiles;
 import documentsMail.SMTPMail;
 import mockclock.AccurateTime;
 import mockclock.Clock;
 import org.joda.time.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Scanner;
 
 import java.io.*;
@@ -108,8 +113,21 @@ public class DocumentStream implements Runnable
         }
     }
 
-    // checks to see whether the file passed in exists or not
-    public boolean fileExists() throws IOException
+
+    // checks to see whether the file is visible within FTP or not
+    public boolean fileExistsFTP() throws IOException
+    {
+        String [] filenames = FTPFiles.getListOfFiles();
+        for(int j = 0; j < filenames.length; j++)
+        {
+            if(filenames[j].equals(fileName()))
+                return true;
+        }
+        return false;
+    }
+
+    // checks to see whether the file passed in exists within the local server or not
+    public boolean fileExistsLocal() throws IOException
     {
         listOfFiles = readFiles();
         if(listOfFiles != null && listOfFiles.length > 0)
@@ -138,34 +156,35 @@ public class DocumentStream implements Runnable
     public void processFiles() throws InterruptedException, IOException
     {
         time.waitTill(6, 0, 0);
+        createFile();
         ftpFile();
-
-        /*
-        // if the date passed in is later than the current date, wait until the appropriate time
-        while(!isAfterDate(DateTime.now()))
-        {
-            Thread.sleep(36000000);
-        }
-        */
 
         listOfFiles = readFiles();
 
         handleFile();
     }
 
+    public void createFile() throws FileNotFoundException
+    {
+        File file = new File("C:/FTPFilesTesting/" + fileName());
+        PrintWriter out = new PrintWriter(file);
+        out.println("Test new file created.");
+        out.close();
+    }
+
     // This method is used to handle the file and log/send emails appropriately
     public void handleFile() throws IOException, InterruptedException
     {
         // if the file exists, then read the file
-        if (fileExists())
+        if (fileExistsFTP())
             readFile(new File("C:/FTPFilesTesting/" + fileName()));
         else
         {
             // otherwise, wait for 3 hours and see if the file will be updated by then
             int numTimesChecked = 1;
-            while (numTimesChecked <= 3 && !fileExists())
+            while (numTimesChecked <= 3 && !fileExistsFTP())
             {
-                if (fileExists())
+                if (fileExistsFTP())
                 {
                     readFile(new File("C:/FTPFilesTesting/" + fileName()));
                     return;
@@ -176,7 +195,7 @@ public class DocumentStream implements Runnable
             }
 
             // if it still does not exist, then log the file and send an email stating that the test failed
-            if (!fileExists())
+            if (!fileExistsFTP())
             {
                 logFile(fileName());
                 SMTPMail.sendMail("guychill168@gmail.com", "gtarocks", "guychill168@gmail.com", "guychill168@gmail.com", "ftp failed to open", "Test result");
@@ -234,7 +253,7 @@ public class DocumentStream implements Runnable
     public void ftpFile() throws UnknownHostException
     {
         FTPClient client = new FTPClient();
-        client.ftpFile(fileName());
+        client.ftpFile("C:/FTPFilesTesting/" + fileName());
     }
 
     // print an error message in the log file that the specific file was not found on the specific date it was searched

@@ -117,7 +117,7 @@ public final class FTPClient implements IFTPClient
                 }
                 else if (line.startsWith("locationToPlace:"))
                 {
-                    locationToPlace = data[1] + ":" + data[2];
+                    locationToPlace = data[1]+ ":" + data[2];
                     System.out.println(locationToPlace);
                 }
             }
@@ -451,10 +451,6 @@ public final class FTPClient implements IFTPClient
                 }
             }
         }
-
-
-
-        System.exit(error ? 1 : 0);
     }
 
     // This method is used to print the file out.

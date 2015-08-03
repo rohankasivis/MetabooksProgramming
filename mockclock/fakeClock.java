@@ -3,11 +3,14 @@ package mockclock;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
+import java.util.ArrayList;
+
 public class fakeClock implements Clock
 {
     private int secondsDifference;
     private int minutesDifference;
     private int hoursDifference;
+    private ArrayList<String> toDoList;
 
     public fakeClock(int seconds, int minutes, int hours)
     {
@@ -19,6 +22,12 @@ public class fakeClock implements Clock
         secondsDifference = seconds - DateTime.now().getSecondOfMinute();
         minutesDifference = minutes - DateTime.now().getMinuteOfHour();
         hoursDifference = hours - DateTime.now().getHourOfDay();
+    }
+
+    public void at(int hours, int minutes, String message)
+    {
+        waitTill(hours, minutes, 0);
+        toDoList.add(message);
     }
 
     public int getSeconds()

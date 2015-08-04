@@ -1,9 +1,13 @@
 package mockclock;
 
+import documents.DocumentStream;
 import org.joda.time.DateTime;
 
 public class AccurateTime implements Clock
 {
+    public void setDocumentStream(DocumentStream stream){}
+    public void at(int hours, int minutes, String message){}
+
     public int getMinutes()
     {
         return DateTime.now().getMinuteOfHour();

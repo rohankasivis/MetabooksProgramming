@@ -1,8 +1,11 @@
 package mockclock;
 
+import documents.DocumentStream;
+import documentsMail.SMTPMail;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class fakeClock implements Clock
@@ -10,11 +13,17 @@ public class fakeClock implements Clock
     private int secondsDifference;
     private int minutesDifference;
     private int hoursDifference;
+    private DocumentStream stream;
     private ArrayList<String> toDoList;
 
     public fakeClock(int seconds, int minutes, int hours)
     {
         waitTill(hours, minutes, seconds);
+    }
+
+    public void setDocumentStream(DocumentStream stream)
+    {
+        this.stream = stream;
     }
 
     public void waitTill(int hours, int minutes, int seconds)
@@ -24,10 +33,36 @@ public class fakeClock implements Clock
         hoursDifference = hours - DateTime.now().getHourOfDay();
     }
 
-    public void at(int hours, int minutes, String message)
+    public void at(int hours, int minutes, String message) throws IOException
     {
         waitTill(hours, minutes, 0);
         toDoList.add(message);
+        if(message.equals("ftpFile"))
+        {
+            stream.ftpFile();
+        }
+        else if(message.equals("check if in ftp"))
+        {
+            if(stream.fileExistsFTP())
+            {
+                toDoList.add("done with the current file");
+            }
+            else
+            {
+                toDoList.add("wait one more hour");
+            }
+        }
+        else if(message.equals("check if in ftp - otherwise send email"))
+        {
+            if(stream.fileExistsFTP())
+            {
+                toDoList.add("done with the current file; it was put in late");
+            }
+            else
+            {
+                SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
+            }
+        }
     }
 
     public int getSeconds()

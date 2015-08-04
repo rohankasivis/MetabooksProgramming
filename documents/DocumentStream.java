@@ -198,7 +198,7 @@ public class DocumentStream implements Runnable
             if (!fileExistsFTP())
             {
                 logFile(fileName());
-                SMTPMail.sendMail("guychill168@gmail.com", "gtarocks", "guychill168@gmail.com", "guychill168@gmail.com", "ftp failed to open", "Test result");
+                SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
             }
         }
     }

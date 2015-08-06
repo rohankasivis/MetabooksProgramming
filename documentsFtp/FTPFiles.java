@@ -24,4 +24,17 @@ public class FTPFiles
         names = client.listNames("C:/");
         return names;
     }
+
+    public static File getFile(String fileName) throws IOException
+    {
+        String [] listOfFiles = getListOfFiles();
+        for(int j = 0; j < listOfFiles.length; j++)
+        {
+            if(listOfFiles[j].equals(fileName))
+                return new File(fileName);
+        }
+
+        System.out.println("File does not exist, bad input.");
+        return null;
+    }
 }

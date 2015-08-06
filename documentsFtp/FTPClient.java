@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import OpenFile.OpenFile;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPHTTPClient;
@@ -453,13 +454,18 @@ public final class FTPClient implements IFTPClient
         }
     }
 
-    // This method is used to print the file out.
-    public void printFile(InputStream input)
+    public File getFile(String fileName) throws IOException
     {
-        Scanner console = new Scanner(input);
-        while(console.hasNextLine())
+        return FTPFiles.getFile(fileName);
+    }
+
+    // This method is used to print the file out.
+    public void printFile(String fileName)
+    {
+        Scanner inFile = OpenFile.openToRead("C:/input/" + fileName);
+        while (inFile.hasNextLine())
         {
-            System.out.println(console.nextLine());
+            System.out.println(inFile.nextLine());
         }
     }
 
@@ -498,7 +504,7 @@ public final class FTPClient implements IFTPClient
         };
     }
 
-    public void delFile(File file)
+    public void delFile(String fileName)
     {
 
     }

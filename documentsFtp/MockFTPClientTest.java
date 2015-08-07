@@ -1,10 +1,11 @@
 package documentsFtp;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 
 public class MockFTPClientTest
 {
-    public static void main(String [] args) throws UnknownHostException
+    public static void main(String [] args) throws UnknownHostException, IOException
     {
         MockFtpClient client = new MockFtpClient();
         client.ftpFile("Hello.txt");

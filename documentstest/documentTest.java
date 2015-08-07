@@ -99,9 +99,8 @@ public class documentTest
     @Test
     public void test_at_6() throws InterruptedException, IOException
     {
-        clock.setDocumentStream(stream);
-        clock.at(5, 0, "ftpFile");
-        clock.at(6, 0, "check if in ftp");
+        clock.at(5, 0, stream.ftpFile());
+        clock.at(6, 0, stream.fileExistsFTP());
         assertEquals(true, stream.fileExistsFTP());
         assertEquals(true, clock.getHour() == 6);
         System.out.println("@Test - The clock has successfully put the file into FTP at 6 as planned.");
@@ -112,7 +111,7 @@ public class documentTest
     {
         if(!stream.fileExistsFTP())
         {
-            clock.at(7, 0, "check if in ftp");
+            clock.at(7, 0, stream.fileExistsFTP());
             assertEquals(true, stream.fileExistsFTP());
             assertEquals(true, clock.getHour() == 7);
             System.out.println("@Test - The clock has successfully put the file into FTP one hour later than planned.");
@@ -126,7 +125,7 @@ public class documentTest
     {
         if(!stream.fileExistsFTP())
         {
-            clock.at(8, 0, "check if in ftp - otherwise send email");
+            clock.at(8, 0, stream.fileExistsFTP());
             assertEquals(true, stream.fileExistsFTP());
             assertEquals(true, clock.getHour() == 8);
             System.out.println("@Test - The clock has successfully put the file into FTP one hour later than planned.");

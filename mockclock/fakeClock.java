@@ -1,7 +1,7 @@
 package mockclock;
 
+import com.sun.corba.se.spi.orbutil.closure.Closure;
 import documents.DocumentStream;
-import documentsMail.SMTPMail;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
@@ -13,17 +13,11 @@ public class fakeClock implements Clock
     private int secondsDifference;
     private int minutesDifference;
     private int hoursDifference;
-    private DocumentStream stream;
-    private ArrayList<String> toDoList;
+    private ArrayList<Closure> toDoList;
 
     public fakeClock(int seconds, int minutes, int hours)
     {
         waitTill(hours, minutes, seconds);
-    }
-
-    public void setDocumentStream(DocumentStream stream)
-    {
-        this.stream = stream;
     }
 
     public void waitTill(int hours, int minutes, int seconds)
@@ -33,6 +27,14 @@ public class fakeClock implements Clock
         hoursDifference = hours - DateTime.now().getHourOfDay();
     }
 
+    public void at(int hours, int minutes, Closure closure)
+    {
+        waitTill(hours, minutes, 0);
+        toDoList.add(message);
+        message.evaluate();
+    }
+
+    /*
     public void at(int hours, int minutes, String message) throws IOException
     {
         waitTill(hours, minutes, 0);
@@ -60,10 +62,11 @@ public class fakeClock implements Clock
             }
             else
             {
-                SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
+                toDoList.add("wait one more hour");
             }
         }
     }
+    */
 
     public int getSeconds()
     {

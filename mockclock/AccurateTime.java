@@ -1,12 +1,12 @@
 package mockclock;
 
+import com.sun.corba.se.spi.orbutil.closure.Closure;
 import documents.DocumentStream;
 import org.joda.time.DateTime;
 
 public class AccurateTime implements Clock
 {
-    public void setDocumentStream(DocumentStream stream){}
-    public void at(int hours, int minutes, String message){}
+    public void at(int hours, int minutes, Closure message){}
 
     public int getMinutes()
     {

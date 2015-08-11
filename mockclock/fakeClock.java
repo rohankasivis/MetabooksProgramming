@@ -1,19 +1,23 @@
 package mockclock;
 
 import com.sun.corba.se.spi.orbutil.closure.Closure;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import documents.DocumentStream;
+import org.easymock.samples.BasicClassMockTest;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 public class fakeClock implements Clock
 {
     private int secondsDifference;
     private int minutesDifference;
     private int hoursDifference;
-    private ArrayList<Closure> toDoList;
+    private ArrayList<String> toDoList;
+    //private DocumentStream stream;
 
     public fakeClock(int seconds, int minutes, int hours)
     {
@@ -27,11 +31,10 @@ public class fakeClock implements Clock
         hoursDifference = hours - DateTime.now().getHourOfDay();
     }
 
-    public void at(int hours, int minutes, Closure closure)
+    public void at(int hours, int minutes, DocumentStream stream, Function<DocumentStream, Boolean> function) throws IOException
     {
         waitTill(hours, minutes, 0);
-        toDoList.add(message);
-        message.evaluate();
+        function.apply(stream);
     }
 
     /*

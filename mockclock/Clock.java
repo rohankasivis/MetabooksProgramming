@@ -1,9 +1,9 @@
 package mockclock;
 
-import com.sun.corba.se.spi.orbutil.closure.Closure;
 import documents.DocumentStream;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 public interface Clock
 {
@@ -16,5 +16,5 @@ public interface Clock
     public int getMonthOfYear();
     public int getYear();
     public long getMilliseconds();
-    public void at(int hours, int minutes, Closure message);
+    public void at(int hours, int minutes, DocumentStream stream, Function<DocumentStream, Boolean> function) throws IOException;
 }

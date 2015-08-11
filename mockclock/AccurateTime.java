@@ -4,9 +4,11 @@ import com.sun.corba.se.spi.orbutil.closure.Closure;
 import documents.DocumentStream;
 import org.joda.time.DateTime;
 
+import java.util.function.Function;
+
 public class AccurateTime implements Clock
 {
-    public void at(int hours, int minutes, Closure message){}
+    public void at(int hours, int minutes, DocumentStream stream, Function<DocumentStream, Boolean> function){}
 
     public int getMinutes()
     {

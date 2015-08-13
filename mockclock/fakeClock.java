@@ -31,10 +31,10 @@ public class fakeClock implements Clock
         hoursDifference = hours - DateTime.now().getHourOfDay();
     }
 
-    public void at(int hours, int minutes, DocumentStream stream, Function<DocumentStream, Boolean> function) throws IOException
+    public void at(int hours, int minutes, Clock stream) throws IOException
     {
         waitTill(hours, minutes, 0);
-        function.apply(stream);
+        function.
     }
 
     /*

@@ -9,14 +9,6 @@ import java.util.function.Function;
 
 public class DocumentStreamWithClosures
 {
-    public void lambdaExample() throws UnknownHostException
-    {
-        DocumentStream stream = new DocumentStream(new AccurateTime());
-        String result = function(stream, DocumentStream::fileName);
-        System.out.println(result);
-        functionWithoutReturn(stream, DocumentStream::ftpFile);
-    }
-
     public static String function(DocumentStream value, Function<DocumentStream, String> function)
     {
         return function.apply(value);
@@ -30,6 +22,5 @@ public class DocumentStreamWithClosures
     public static void main(String [] args)
     {
         DocumentStreamWithClosures closures = new DocumentStreamWithClosures();
-        closures.lambdaExample();
     }
 }

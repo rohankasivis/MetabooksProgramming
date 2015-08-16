@@ -1,6 +1,8 @@
 package documentstest;
 
 import documents.DocumentStream;
+import documents.FTPExists;
+import documents.Stream;
 import documentsMail.SMTPMail;
 import mockclock.*;
 import org.junit.Before;
@@ -19,6 +21,7 @@ public class documentTest
 {
     private Clock clock;
     private DocumentStream stream;
+
 
     public documentTest(Clock clock)
     {
@@ -99,8 +102,8 @@ public class documentTest
     @Test
     public void test_at_6() throws InterruptedException, IOException
     {
-        clock.at(5, 0,  () -> true);
-        clock.at(6, 0, () -> stream.fileExistsFTP());
+        clock.at(5, 0, (() -> {try {stream.ftpFile();} catch (UnknownHostException e) {e.printStackTrace();}}));
+        clock.at(6, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
         assertEquals(true, stream.fileExistsFTP());
         assertEquals(true, clock.getHour() == 6);
         System.out.println("@Test - The clock has successfully put the file into FTP at 6 as planned.");
@@ -111,7 +114,7 @@ public class documentTest
     {
         if(!stream.fileExistsFTP())
         {
-            clock.at(7, 0, () -> stream.fileExistsFTP());
+            clock.at(7, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
             assertEquals(true, stream.fileExistsFTP());
             assertEquals(true, clock.getHour() == 7);
             System.out.println("@Test - The clock has successfully put the file into FTP one hour later than planned.");
@@ -125,7 +128,7 @@ public class documentTest
     {
         if(!stream.fileExistsFTP())
         {
-            clock.at(8, 0, () -> stream.fileExistsFTP());
+            clock.at(8, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
             assertEquals(true, stream.fileExistsFTP());
             assertEquals(true, clock.getHour() == 8);
             System.out.println("@Test - The clock has successfully put the file into FTP one hour later than planned.");

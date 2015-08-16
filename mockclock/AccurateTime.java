@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class AccurateTime implements Clock
 {
-    public void at(int hours, int minutes, DocumentStream stream, Function<DocumentStream, Boolean> function){}
+    public void at(int hours, int minutes, Runnable closure){}
 
     public int getMinutes()
     {

@@ -39,6 +39,11 @@ public class MockFtpClient implements IFTPClient
         }
     }
 
+    public boolean fileExists(String fileName)
+    {
+        return fileNames.containsKey(fileName);
+    }
+
     public File getFile(String fileName) throws IOException
     {
         if(!fileNames.containsKey(fileName))

@@ -16,4 +16,5 @@ public interface IFTPClient
     public void deleteFile(FTPClient ftp);
     public CopyStreamListener createListener();
     public void delFile(String fileName);
+    public boolean fileExists(String fileName);
 }

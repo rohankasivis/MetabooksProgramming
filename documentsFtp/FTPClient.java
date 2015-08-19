@@ -504,8 +504,8 @@ public final class FTPClient implements IFTPClient
         };
     }
 
-    public void delFile(String fileName)
-    {
+    // stubbed out methods
+    public void delFile(String fileName){}
 
-    }
+    public boolean fileExists(String fileName){return true;}
 }

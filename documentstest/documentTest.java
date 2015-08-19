@@ -1,9 +1,11 @@
 package documentstest;
 
 import documents.DocumentStream;
-import documents.FTPExists;
 import documents.Stream;
+import documentsFtp.IFTPClient;
+import documentsFtp.MockFtpClient;
 import documentsMail.SMTPMail;
+import documentsMail.mockEmail;
 import mockclock.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,13 +82,6 @@ public class documentTest
     }
 
     @Test
-    public void test_mail()
-    {
-        SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
-        System.out.println("@Test - emails can be send properly");
-    }
-
-    @Test
     public void check_all_files_read() throws IOException
     {
         stream.readFiles();
@@ -97,7 +92,61 @@ public class documentTest
         System.out.println("@Test - all of the files are being read and the date is printed properly in the output file.");
     }
 
-    // The next three test cases are intended to make sure that the process of FTPing the file and then
+    // The next few test cases are meant to check the fake FTP Client()
+    @Test
+    public void test_file_exists_mock() throws UnknownHostException
+    {
+        MockFtpClient client = new MockFtpClient();
+        client.ftpFile("filedata.txt");
+        assertEquals(true, client.fileExists("filedata.txt"));
+        System.out.println("@Test - the mockftp has correctly put the file into ftp, and now it exists.");
+    }
+
+    @Test
+    public void test_delete_mock() throws UnknownHostException
+    {
+        MockFtpClient client = new MockFtpClient();
+        client.ftpFile("filedata.txt");
+        client.delFile("filedata.txt");
+        assertEquals(false, client.fileExists("filedata.txt"));
+    }
+
+    // the next few test cases are meant to check if the emails (both fake and ordinary) are working properly
+    @Test
+    public void check_actual_mail()
+    {
+        boolean result = SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "random test", "Test result");
+        assertEquals(true, result);
+        System.out.println("@Test - The actual email server is sent properly.");
+    }
+
+    @Test
+    public void check_fake_mail()
+    {
+        mockEmail email = new mockEmail();
+        email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "random test", "Test result");
+        assertEquals(true, email.emailSent("ftp failed to open"));
+        System.out.println("@Test - The mock email server works properly.");
+    }
+
+    // The following few tests combine the functionality of both the mock ftp and mock clock
+    @Test
+    public void test_at_10() throws IOException
+    {
+        IFTPClient client = new MockFtpClient();
+        clock.at(9, 0, (() -> {try {client.ftpFile("filedata.txt");} catch (IOException e) {e.printStackTrace();}}));
+        clock.at(10, 0, (() -> {try {client.fileExists("filedata.txt");} catch (Exception e) {e.printStackTrace();}}));
+        assertEquals(true, clock.getHour() == 10);
+        assertEquals(true, client.fileExists("filedata.txt"));
+        if(!client.fileExists("filedata.txt"))
+        {
+            mockEmail email = new mockEmail();
+            email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "failed to ftp", "Test result");
+            assertEquals(true, email.emailSent("failed to ftp"));
+        }
+    }
+
+    // The next three test cases are intended to make sure that the process of FTPing (actual FTP) the file and then
     // checking at various times follows properly.
     @Test
     public void test_at_6() throws InterruptedException, IOException

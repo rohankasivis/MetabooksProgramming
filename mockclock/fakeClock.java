@@ -37,40 +37,6 @@ public class fakeClock implements Clock
         closure.run();
     }
 
-    /*
-    public void at(int hours, int minutes, String message) throws IOException
-    {
-        waitTill(hours, minutes, 0);
-        toDoList.add(message);
-        if(message.equals("ftpFile"))
-        {
-            stream.ftpFile();
-        }
-        else if(message.equals("check if in ftp"))
-        {
-            if(stream.fileExistsFTP())
-            {
-                toDoList.add("done with the current file");
-            }
-            else
-            {
-                toDoList.add("wait one more hour");
-            }
-        }
-        else if(message.equals("check if in ftp - otherwise send email"))
-        {
-            if(stream.fileExistsFTP())
-            {
-                toDoList.add("done with the current file; it was put in late");
-            }
-            else
-            {
-                toDoList.add("wait one more hour");
-            }
-        }
-    }
-    */
-
     public int getSeconds()
     {
         return (DateTime.now().getSecondOfMinute() + secondsDifference) % 60;

@@ -12,7 +12,7 @@ import javax.mail.internet.MimeMessage;
 
 public class SMTPMail
 {
-    public static void sendMail(final String username, final String password, String recipient, String sender, String messageInfo, String subject)
+    public static boolean sendMail(final String username, final String password, String recipient, String sender, String messageInfo, String subject)
     {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -43,7 +43,7 @@ public class SMTPMail
             transport.sendMessage(message, message.getAllRecipients());
             // Transport.send(message);
 
-            System.out.println("Done");
+            return true;
 
         } catch (MessagingException e)
         {

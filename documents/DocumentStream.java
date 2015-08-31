@@ -9,6 +9,7 @@ import mockclock.AccurateTime;
 import mockclock.Clock;
 import org.joda.time.*;
 
+import javax.mail.MessagingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;

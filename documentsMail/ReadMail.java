@@ -38,16 +38,16 @@ public class ReadMail
         }
     }
 
-    public List<File> getAttachments() throws MessagingException, IOException
+    public List<File> getAttachments() throws IOException
     {
         List<File> attachments = new ArrayList<File>();
+        try {
             Multipart multipart = (Multipart) message.getContent();
             // System.out.println(multipart.getCount());
 
             for (int i = 0; i < multipart.getCount(); i++) {
                 BodyPart bodyPart = multipart.getBodyPart(i);
-                if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()))
-                {
+                if (!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition())) {
                     continue; // dealing with attachments only
                 }
                 InputStream is = bodyPart.getInputStream();
@@ -55,7 +55,7 @@ public class ReadMail
                 FileOutputStream fos = new FileOutputStream(f);
                 byte[] buf = new byte[4096];
                 int bytesRead;
-                while((bytesRead = is.read(buf))!=-1) {
+                while ((bytesRead = is.read(buf)) != -1) {
                     fos.write(buf, 0, bytesRead);
                 }
                 fos.close();
@@ -63,6 +63,11 @@ public class ReadMail
             }
 
 
-        return attachments;
+            return attachments;
+        }catch (MessagingException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

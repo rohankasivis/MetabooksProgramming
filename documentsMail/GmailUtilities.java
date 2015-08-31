@@ -1,3 +1,4 @@
+
 package documentsMail;
 
 import com.sun.mail.pop3.POP3SSLStore;
@@ -236,13 +237,3 @@ public class GmailUtilities {
     }
 
 }
-
-
-
-
-
-    /**
-     * @param args the command line arguments
-     */
-
-

@@ -1,8 +1,7 @@
+
 package mockclock;
 
 import documents.DocumentStream;
-import documents.FTPExists;
-
 import java.io.IOException;
 import java.util.function.Function;
 

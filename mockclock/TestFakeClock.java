@@ -1,3 +1,4 @@
+
 package mockclock;
 
 import documents.DocumentStream;

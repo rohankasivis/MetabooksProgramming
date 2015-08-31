@@ -1,13 +1,12 @@
+
 package documentstest;
 
 import documents.DocumentStream;
-import documents.Stream;
 import documentsFtp.IFTPClient;
 import documentsFtp.MockFtpClient;
 import documentsMail.SMTPMail;
-import documentsMail.mockEmail;
+import documentsMail.mockSendEmail;
 import mockclock.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -123,7 +122,7 @@ public class documentTest
     @Test
     public void check_fake_mail()
     {
-        mockEmail email = new mockEmail();
+        mockSendEmail email = new mockSendEmail();
         email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "random test", "Test result");
         assertEquals(true, email.emailSent("ftp failed to open"));
         System.out.println("@Test - The mock email server works properly.");
@@ -140,7 +139,7 @@ public class documentTest
         assertEquals(true, client.fileExists("filedata.txt"));
         if(!client.fileExists("filedata.txt"))
         {
-            mockEmail email = new mockEmail();
+            mockSendEmail email = new mockSendEmail();
             email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "failed to ftp", "Test result");
             assertEquals(true, email.emailSent("failed to ftp"));
         }

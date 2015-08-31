@@ -1,3 +1,4 @@
+
 package mockclock;
 
 import com.sun.corba.se.spi.orbutil.closure.Closure;

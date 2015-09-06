@@ -1,18 +1,15 @@
-
 package documents;
 
 import OpenFile.OpenFile;
 import documentsFtp.FTPClient;
 import documentsFtp.FTPFiles;
+import documentsFtp.IFTPClient;
+import documentsMail.Email;
 import documentsMail.SMTPMail;
 import mockclock.AccurateTime;
 import mockclock.Clock;
 import org.joda.time.*;
 
-import javax.mail.MessagingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Scanner;
 
 import java.io.*;
@@ -20,18 +17,23 @@ import java.net.UnknownHostException;
 
 // This class is responsible for reading all of the documents and keeping a state of
 // which files are read and what still needs to be done.
-public class DocumentStream implements Runnable
+public class DocumentStream implements Runnable, Stream
 {
     private Clock time;
     private boolean [] hasRead;
     private File [] listOfFiles;
     private PrintWriter writer;
+    private Email email;
+    private IFTPClient client;
 
     // This is the constructor for the class, which takes a DateTime that will
     // represent the time that run is based on
-    public DocumentStream(Clock time)
+    public DocumentStream(Clock time, IFTPClient client, Email email)
     {
         this.time = time;
+        this.client = client;
+        this.email = email;
+
         try
         {
             writer = new PrintWriter(new BufferedWriter(new FileWriter("filedata.txt", true)));
@@ -114,7 +116,6 @@ public class DocumentStream implements Runnable
             return date;
         }
     }
-
 
     // checks to see whether the file is visible within FTP or not
     public boolean fileExistsFTP() throws IOException
@@ -200,7 +201,7 @@ public class DocumentStream implements Runnable
             if (!fileExistsFTP())
             {
                 logFile(fileName());
-                SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
+                email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
             }
         }
     }
@@ -254,7 +255,6 @@ public class DocumentStream implements Runnable
     // uses ftpclient to ftp the file at 6 am
     public void ftpFile() throws UnknownHostException
     {
-        FTPClient client = new FTPClient();
         client.ftpFile("C:/FTPFilesTesting/" + fileName());
     }
 

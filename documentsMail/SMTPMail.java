@@ -11,9 +11,9 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class SMTPMail
+public class SMTPMail implements Email
 {
-    public static boolean sendMail(final String username, final String password, String recipient, String sender, String messageInfo, String subject)
+    public boolean sendMail(final String username, final String password, String recipient, String sender, String messageInfo, String subject)
     {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -44,11 +44,19 @@ public class SMTPMail
             transport.sendMessage(message, message.getAllRecipients());
             // Transport.send(message);
 
+            
+
             return true;
 
         } catch (MessagingException e)
         {
             throw new RuntimeException(e);
         }
+    }
+
+    // stubbed out unimplemented method
+    public boolean emailSent(String messageInfo)
+    {
+        return true;
     }
 }

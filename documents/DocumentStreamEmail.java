@@ -30,7 +30,7 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
         }
     }
 
-    public File[] readFiles() throws IOException
+    public File[] recoverState() throws IOException
     {
         ReadMail mail = new ReadMail();
         List<File> files = mail.getAttachments();
@@ -45,16 +45,10 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
         return file;
     }
 
-    // this is the method used for emailing files - still needs to be fixed as it does not include any attachments
-    public void emailFile()
-    {
-        email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "This is the email to process.", "Attachments");
-    }
-
     public void run()
     {
         try {
-            processFiles();
+            handleFile();
         }catch (UnknownHostException e)
         {
             System.exit(1);
@@ -69,19 +63,19 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
         }
     }
 
-    public void processFiles() throws InterruptedException, IOException
+    public void createFile()
     {
-        time.waitTill(6, 0, 0);
-        createFile();
-        emailFile();
-        listOfFiles = readFiles();
 
-        handleFile();
     }
 
     // overriding the original handleFile() method in order to process emails differently
     public void handleFile() throws IOException, InterruptedException
     {
+        time.waitTill(6, 0, 0);
+        createFile();
+        email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "This is the email to process.", "Attachments");
+        listOfFiles = recoverState();
+
         if(fileExistsEmail())
             readFile(new File("C:/FTPFilesTesting/" + fileName()));
         else
@@ -111,7 +105,7 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
 
     public boolean fileExistsEmail() throws IOException
     {
-        File [] files = readFiles();
+        File [] files = recoverState();
         for(int j = 0; j < files.length; j++)
         {
             if(files[j].getName().equals(fileName()))

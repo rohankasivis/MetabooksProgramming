@@ -88,7 +88,7 @@ public class documentTest
     @Test
     public void check_all_files_read() throws IOException
     {
-        stream.readFiles();
+        stream.recoverState();
         int date [] = stream.parseLogFile();
         assertEquals(8, date[0]);
         assertEquals(4, date[1]);
@@ -194,7 +194,7 @@ public class documentTest
     @Test
     public void set_up() throws IOException, InterruptedException
     {
-        stream.processFiles();
+        stream.handleFile();
         System.out.println("@Test - This test simply runs processFiles, the key method of documentStream.");
     }
 }

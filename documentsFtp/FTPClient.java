@@ -457,7 +457,7 @@ public final class FTPClient implements IFTPClient
 
     public File getFile(String fileName) throws IOException
     {
-        return FTPFiles.getFile(fileName);
+        return FileServer.getFile(fileName);
     }
 
     // This method is used to print the file out.

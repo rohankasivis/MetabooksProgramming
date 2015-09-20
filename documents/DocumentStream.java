@@ -1,12 +1,9 @@
 package documents;
 
 import OpenFile.OpenFile;
-import documentsFtp.FTPClient;
-import documentsFtp.FTPFiles;
+import documentsFtp.FileServer;
 import documentsFtp.IFTPClient;
 import documentsMail.Email;
-import documentsMail.SMTPMail;
-import mockclock.AccurateTime;
 import mockclock.Clock;
 import org.joda.time.*;
 
@@ -24,14 +21,14 @@ public class DocumentStream implements Runnable, Stream
     private File [] listOfFiles;
     private PrintWriter writer;
     private Email email;
-    private IFTPClient client;
+    private IFTPClient ftp;
 
     // This is the constructor for the class, which takes a DateTime that will
     // represent the time that run is based on
-    public DocumentStream(Clock time, IFTPClient client, Email email)
+    public DocumentStream(Clock time, IFTPClient ftp, Email email)
     {
         this.time = time;
-        this.client = client;
+        this.ftp = ftp;
         this.email = email;
 
         try
@@ -45,7 +42,7 @@ public class DocumentStream implements Runnable, Stream
 
     // This reads all of the files in the FTPFiles server, and also parses the log file to determine
     // the last time files were read.
-    public File [] readFiles() throws IOException
+    public File [] recoverState() throws IOException
     {
         File folder = new File("C:/FTPFilesTesting");
         File[] list = folder.listFiles();
@@ -69,7 +66,7 @@ public class DocumentStream implements Runnable, Stream
                 long time = list[i].lastModified();
                 if(this.time.getMilliseconds() > time)
                 {
-                    readFile(list[i]);
+                    hasRead[i] = true;
                 }
             }
         }
@@ -120,7 +117,7 @@ public class DocumentStream implements Runnable, Stream
     // checks to see whether the file is visible within FTP or not
     public boolean fileExistsFTP() throws IOException
     {
-        String [] filenames = FTPFiles.getListOfFiles();
+        String [] filenames = FileServer.getListOfFiles();
         for(int j = 0; j < filenames.length; j++)
         {
             if(filenames[j].equals(fileName()))
@@ -132,7 +129,7 @@ public class DocumentStream implements Runnable, Stream
     // checks to see whether the file passed in exists within the local server or not
     public boolean fileExistsLocal() throws IOException
     {
-        listOfFiles = readFiles();
+        listOfFiles = recoverState();
         if(listOfFiles != null && listOfFiles.length > 0)
         {
             for(int j = 0; j < listOfFiles.length; j++)
@@ -155,18 +152,6 @@ public class DocumentStream implements Runnable, Stream
         return month + "-" + day + "-" + year + "data.txt";
     }
 
-    // Processes all of the files and ftps the current file at 6 am
-    public void processFiles() throws InterruptedException, IOException
-    {
-        time.waitTill(6, 0, 0);
-        createFile();
-        ftpFile();
-
-        listOfFiles = readFiles();
-
-        handleFile();
-    }
-
     public void createFile() throws FileNotFoundException
     {
         File file = new File("C:/FTPFilesTesting/" + fileName());
@@ -178,6 +163,12 @@ public class DocumentStream implements Runnable, Stream
     // This method is used to handle the file and log/send emails appropriately
     public void handleFile() throws IOException, InterruptedException
     {
+        time.waitTill(6, 0, 0);
+        createFile();
+        ftpFile();
+
+        listOfFiles = recoverState();
+
         // if the file exists, then read the file
         if (fileExistsFTP())
             readFile(new File("C:/FTPFilesTesting/" + fileName()));
@@ -210,7 +201,7 @@ public class DocumentStream implements Runnable, Stream
     public void run()
     {
         try {
-            processFiles();
+            handleFile();
         }catch (UnknownHostException e)
         {
             System.exit(1);
@@ -239,6 +230,7 @@ public class DocumentStream implements Runnable, Stream
     // This method is used to read the file, and once it does this, it prints out the date the specific file was read
     public void readFile(File file) throws IOException
     {
+        /*
         for(int j = 0; j < listOfFiles.length; j++)
         {
             if(listOfFiles[j] == file)
@@ -250,12 +242,13 @@ public class DocumentStream implements Runnable, Stream
         writer.println(file.getName() + ": Read on: " + time.getMonthOfYear() + "-" + time.getDayOfMonth() + "-" + time.getYear());
 
         reader.close();
+        */
     }
 
     // uses ftpclient to ftp the file at 6 am
     public void ftpFile() throws UnknownHostException
     {
-        client.ftpFile("C:/FTPFilesTesting/" + fileName());
+        ftp.ftpFile("C:/FTPFilesTesting/" + fileName());
     }
 
     // print an error message in the log file that the specific file was not found on the specific date it was searched

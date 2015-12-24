@@ -1,11 +1,8 @@
 package mockclock;
 
-import documents.DocumentStream;
-import org.joda.time.DateTime;
-
 // this class is responsible for testing the fake clock, in order to make sure that
 // it implements the functionality of an actual clock using the correct time, and
-// also makes sure that the waittill function works properly
+// also makes sure that the waitTill function works properly
 public class TestFakeClock
 {
     public static void main(String [] args) throws InterruptedException

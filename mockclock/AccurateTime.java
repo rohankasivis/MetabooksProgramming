@@ -1,14 +1,19 @@
 package mockclock;
 
-import com.sun.corba.se.spi.orbutil.closure.Closure;
-import documents.DocumentStream;
 import org.joda.time.DateTime;
 
-import java.util.function.Function;
+import java.io.IOException;
 
 public class AccurateTime implements Clock
 {
-    public void at(int hours, int minutes, Runnable closure){}
+    // no need for constructor
+
+    // at method just like in fake clock
+    public void at(int hours, int minutes, int seconds, Runnable closure) throws IOException, InterruptedException
+    {
+        waitTill(hours, minutes, seconds);
+        closure.run();
+    }
 
     public int getMinutes()
     {
@@ -40,7 +45,7 @@ public class AccurateTime implements Clock
         return DateTime.now().getYear();
     }
 
-    // uses Thread to wait until 6 am of the specific day
+    // uses Thread to wait until the given time of the specific day
     public void waitTill(int hour, int minute, int seconds) throws InterruptedException
     {
         int hoursLeft = 0;

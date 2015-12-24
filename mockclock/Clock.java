@@ -1,10 +1,6 @@
 package mockclock;
 
-import documents.DocumentStream;
-import documents.FTPExists;
-
 import java.io.IOException;
-import java.util.function.Function;
 
 public interface Clock
 {
@@ -17,5 +13,5 @@ public interface Clock
     public int getMonthOfYear();
     public int getYear();
     public long getMilliseconds();
-    public  void at(int hours, int minutes, Runnable closure) throws IOException;
+    public  void at(int hours, int minutes, int seconds, Runnable closure) throws IOException, InterruptedException;
 }

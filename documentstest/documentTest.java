@@ -1,13 +1,13 @@
 package documentstest;
 
 import documents.DocumentStream;
-import documents.Stream;
+import documentsFtp.FTPClient;
 import documentsFtp.IFTPClient;
 import documentsFtp.MockFtpClient;
+import documentsMail.Email;
+import documentsMail.MockEmail;
 import documentsMail.SMTPMail;
-import documentsMail.mockEmail;
 import mockclock.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,19 +22,23 @@ import static org.junit.runners.Parameterized.Parameters;
 public class documentTest
 {
     private Clock clock;
+    private IFTPClient client;
+    private Email email;
     private DocumentStream stream;
 
 
-    public documentTest(Clock clock)
+    public documentTest(Clock clock, IFTPClient client, Email email)
     {
         this.clock = clock;
-        stream = new DocumentStream(clock);
+        this.client = client;
+        this.email = email;
+        stream = new DocumentStream(clock, client, email);
     }
 
     @Parameters
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
-                {new fakeClock(14, 39, 12)}
+                {new fakeClock(14, 39, 12), new FTPClient(), new SMTPMail()}
         });
     }
 
@@ -84,7 +88,7 @@ public class documentTest
     @Test
     public void check_all_files_read() throws IOException
     {
-        stream.readFiles();
+        stream.recoverState();
         int date [] = stream.parseLogFile();
         assertEquals(8, date[0]);
         assertEquals(4, date[1]);
@@ -115,7 +119,7 @@ public class documentTest
     @Test
     public void check_actual_mail()
     {
-        boolean result = SMTPMail.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "random test", "Test result");
+        boolean result = email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "random test", "Test result");
         assertEquals(true, result);
         System.out.println("@Test - The actual email server is sent properly.");
     }
@@ -123,7 +127,7 @@ public class documentTest
     @Test
     public void check_fake_mail()
     {
-        mockEmail email = new mockEmail();
+        MockEmail email = new MockEmail();
         email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "random test", "Test result");
         assertEquals(true, email.emailSent("ftp failed to open"));
         System.out.println("@Test - The mock email server works properly.");
@@ -140,7 +144,7 @@ public class documentTest
         assertEquals(true, client.fileExists("filedata.txt"));
         if(!client.fileExists("filedata.txt"))
         {
-            mockEmail email = new mockEmail();
+            MockEmail email = new MockEmail();
             email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "failed to ftp", "Test result");
             assertEquals(true, email.emailSent("failed to ftp"));
         }
@@ -190,7 +194,7 @@ public class documentTest
     @Test
     public void set_up() throws IOException, InterruptedException
     {
-        stream.processFiles();
+        stream.handleFile();
         System.out.println("@Test - This test simply runs processFiles, the key method of documentStream.");
     }
 }

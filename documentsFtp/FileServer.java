@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 package documentsFtp;
 
 import org.apache.commons.net.ftp.FTPClient;
+=======
+
+package documentsFtp;
+
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
+>>>>>>> ff3d78988148663c85ffc3ce26282a142fbf3e6e
 
 import java.io.File;
 import java.io.IOException;

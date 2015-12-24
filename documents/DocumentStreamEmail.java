@@ -20,7 +20,11 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
 
     public DocumentStreamEmail(Clock time, IFTPClient client, Email email)
     {
+<<<<<<< HEAD
         super(time, client, email, 6, 0, 0);
+=======
+        super(time, client, email);
+>>>>>>> ff3d78988148663c85ffc3ce26282a142fbf3e6e
         try
         {
             writer = new PrintWriter(new BufferedWriter(new FileWriter("filedata.txt", true)));

@@ -1,3 +1,4 @@
+
 package documents;
 
 import org.joda.time.DateTime;
@@ -12,7 +13,6 @@ public interface Stream
     public boolean fileExistsFTP() throws IOException;
     public boolean fileExistsLocal() throws IOException;
     public String fileName();
-    public void processFiles() throws InterruptedException, IOException;
     public void createFile() throws FileNotFoundException;
     public void handleFile() throws IOException, InterruptedException;
     public boolean hasReadFile(DateTime time);

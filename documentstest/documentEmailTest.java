@@ -45,7 +45,11 @@ public class documentEmailTest
     public void test_file_exists_email() throws IOException
     {
         stream.createFile();
+<<<<<<< HEAD
         //stream.emailFile();
+=======
+        stream.emailFile();
+>>>>>>> ff3d78988148663c85ffc3ce26282a142fbf3e6e
         assertEquals(true, stream.fileExistsEmail());
         System.out.println("@Test - the newly created file has been sent as an email");
     }

@@ -1,4 +1,3 @@
-
 package mockclock;
 
 import org.joda.time.DateTime;
@@ -10,9 +9,15 @@ public class AccurateTime implements Clock
     // no need for constructor
 
     // at method just like in fake clock
-    public void at(int hours, int minutes, int seconds, Runnable closure) throws IOException, InterruptedException
+    public void at(int hours, int minutes, int seconds, Runnable closure) throws IOException
     {
-        waitTill(hours, minutes, seconds);
+        try
+        {
+            waitTill(hours, minutes, seconds);
+        }catch (InterruptedException e)
+        {
+            System.exit(0);
+        }
         closure.run();
     }
 

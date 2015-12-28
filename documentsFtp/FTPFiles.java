@@ -1,4 +1,3 @@
-
 package documentsFtp;
 
 import org.apache.commons.net.ftp.FTPClient;

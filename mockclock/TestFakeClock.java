@@ -1,4 +1,3 @@
-
 package mockclock;
 
 // this class is responsible for testing the fake clock, in order to make sure that

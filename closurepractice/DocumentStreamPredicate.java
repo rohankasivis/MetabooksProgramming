@@ -14,7 +14,7 @@ public class DocumentStreamPredicate
 
     public static void main(String [] args)
     {
-        DocumentStream stream = new DocumentStream(new AccurateTime());
+        //DocumentStream stream = new DocumentStream(new AccurateTime());
 
     }
 }

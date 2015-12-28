@@ -32,7 +32,7 @@ public class documentTest
         this.clock = clock;
         this.client = client;
         this.email = email;
-        stream = new DocumentStream(clock, client, email);
+        stream = new DocumentStream(clock, client, email, 6, 0, 0);
     }
 
     @Parameters
@@ -138,8 +138,8 @@ public class documentTest
     public void test_at_10() throws IOException
     {
         IFTPClient client = new MockFtpClient();
-        clock.at(9, 0, (() -> {try {client.ftpFile("filedata.txt");} catch (IOException e) {e.printStackTrace();}}));
-        clock.at(10, 0, (() -> {try {client.fileExists("filedata.txt");} catch (Exception e) {e.printStackTrace();}}));
+        clock.at(9, 0, 0, (() -> {try {client.ftpFile("filedata.txt");} catch (IOException e) {e.printStackTrace();}}));
+        clock.at(10, 0, 0, (() -> {try {client.fileExists("filedata.txt");} catch (Exception e) {e.printStackTrace();}}));
         assertEquals(true, clock.getHour() == 10);
         assertEquals(true, client.fileExists("filedata.txt"));
         if(!client.fileExists("filedata.txt"))
@@ -155,8 +155,8 @@ public class documentTest
     @Test
     public void test_at_6() throws InterruptedException, IOException
     {
-        clock.at(5, 0, (() -> {try {stream.ftpFile();} catch (UnknownHostException e) {e.printStackTrace();}}));
-        clock.at(6, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
+        clock.at(5, 0, 0, (() -> {try {stream.ftpFile();} catch (UnknownHostException e) {e.printStackTrace();}}));
+        clock.at(6, 0, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
         assertEquals(true, stream.fileExistsFTP());
         assertEquals(true, clock.getHour() == 6);
         System.out.println("@Test - The clock has successfully put the file into FTP at 6 as planned.");
@@ -167,7 +167,7 @@ public class documentTest
     {
         if(!stream.fileExistsFTP())
         {
-            clock.at(7, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
+            clock.at(7, 0, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
             assertEquals(true, stream.fileExistsFTP());
             assertEquals(true, clock.getHour() == 7);
             System.out.println("@Test - The clock has successfully put the file into FTP one hour later than planned.");
@@ -181,7 +181,7 @@ public class documentTest
     {
         if(!stream.fileExistsFTP())
         {
-            clock.at(8, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
+            clock.at(8, 0, 0, (() -> {try {stream.fileExistsFTP();} catch (IOException e) {e.printStackTrace();}}));
             assertEquals(true, stream.fileExistsFTP());
             assertEquals(true, clock.getHour() == 8);
             System.out.println("@Test - The clock has successfully put the file into FTP one hour later than planned.");

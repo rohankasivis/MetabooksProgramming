@@ -1,4 +1,3 @@
-
 package documentsMail;
 
 import java.util.Properties;
@@ -43,8 +42,6 @@ public class SMTPMail implements Email
             System.out.println("Transport: "+transport.toString());
             transport.sendMessage(message, message.getAllRecipients());
             // Transport.send(message);
-
-            
 
             return true;
 

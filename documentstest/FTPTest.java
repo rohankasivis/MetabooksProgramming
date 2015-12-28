@@ -1,8 +1,7 @@
-
 package documentstest;
 
 import documentsFtp.FTPClient;
-import documentsFtp.FileServer;
+import documentsFtp.FTPFiles;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -13,7 +12,7 @@ public class FTPTest
     {
         FTPClient client = new FTPClient();
         client.ftpFile("C:/FTPFilesTesting/8-2-2015data.txt");
-        String [] fileNames = FileServer.getListOfFiles();
+        String [] fileNames = FTPFiles.getListOfFiles();
         for(int j = 0; j < fileNames.length; j++)
         {
             System.out.println(fileNames[j]);

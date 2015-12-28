@@ -1,4 +1,3 @@
-
 package documentsFtp;/*
 * This program is used to read and print out
 * on the server using the apache FTP client.
@@ -457,7 +456,7 @@ public final class FTPClient implements IFTPClient
 
     public File getFile(String fileName) throws IOException
     {
-        return FileServer.getFile(fileName);
+        return FTPFiles.getFile(fileName);
     }
 
     // This method is used to print the file out.

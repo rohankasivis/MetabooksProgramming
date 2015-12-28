@@ -29,7 +29,7 @@ public class documentEmailTest
         this.clock = clock;
         this.client = client;
         this.email = email;
-        stream = new DocumentStreamEmail(clock, client, email);
+        stream = new DocumentStreamEmail(clock, client, email, 6, 0, 0);    // for testing purposes just use 6 am
     }
 
     @Parameters
@@ -45,11 +45,7 @@ public class documentEmailTest
     public void test_file_exists_email() throws IOException
     {
         stream.createFile();
-<<<<<<< HEAD
         //stream.emailFile();
-=======
-        stream.emailFile();
->>>>>>> ff3d78988148663c85ffc3ce26282a142fbf3e6e
         assertEquals(true, stream.fileExistsEmail());
         System.out.println("@Test - the newly created file has been sent as an email");
     }

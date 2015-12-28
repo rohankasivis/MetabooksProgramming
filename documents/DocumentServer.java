@@ -6,18 +6,27 @@ import documentsMail.Email;
 import documentsMail.SMTPMail;
 import mockclock.AccurateTime;
 import mockclock.Clock;
-import org.joda.time.*;
+import java.util.Scanner;
 
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 public class DocumentServer
 {
-    public static void main(String [] args) throws InterruptedException, UnknownHostException, IOException
+    // The main class which is used to perform the sequence of actions. In this case, we will choose
+    // the time of FTP to be 6 am
+    // -- newly added: takes in input from the user as to the hour, minute, and second
+    public static void main(String [] args) throws InterruptedException, IOException
     {
         Clock clock = new AccurateTime();
         IFTPClient client = new FTPClient();
         Email email = new SMTPMail();
-        (new Thread(new DocumentStream(clock, client, email))).start();
+        Scanner input = new Scanner(System.in);
+        System.out.print("Please enter the hour at which you want the files to be fetched from FTP: ");
+        int hour = input.nextInt();
+        System.out.print("\nPlease enter the minute at the specified hour: ");
+        int minute = input.nextInt();
+        System.out.print("\nPlease enter the second at the specified minute: ");
+        int second = input.nextInt();
+        (new Thread(new DocumentStream(clock, client, email, hour, minute, second))).start();
     }
 }

@@ -18,13 +18,15 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
     private Email email;
     private File[] listOfFiles;
 
-    public DocumentStreamEmail(Clock time, IFTPClient client, Email email)
+    // newly added - private variables that indicate the time at which files will be placed in FTP server
+    private int hourAtEmail;
+    private int minuteAtEmail;
+    private int secondAtEmail;
+
+    public DocumentStreamEmail(Clock time, IFTPClient client, Email email, int hourAtEmail, int minuteAtEmail, int secondAtEmail)
     {
-<<<<<<< HEAD
-        super(time, client, email, 6, 0, 0);
-=======
-        super(time, client, email);
->>>>>>> ff3d78988148663c85ffc3ce26282a142fbf3e6e
+        super(time, client, email, hourAtEmail, minuteAtEmail, secondAtEmail);
+
         try
         {
             writer = new PrintWriter(new BufferedWriter(new FileWriter("filedata.txt", true)));

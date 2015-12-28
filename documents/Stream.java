@@ -1,4 +1,3 @@
-
 package documents;
 
 import org.joda.time.DateTime;
@@ -11,12 +10,12 @@ import java.net.UnknownHostException;
 public interface Stream
 {
     public boolean fileExistsFTP() throws IOException;
-    public boolean fileExistsLocal() throws IOException;
-    public String fileName();
-    public void createFile() throws FileNotFoundException;
+    public boolean fileExistsLocal(File file) throws IOException;
+    public File createFile() throws FileNotFoundException, IOException;
     public void handleFile() throws IOException, InterruptedException;
-    public boolean hasReadFile(DateTime time);
-    public void readFile(File file) throws IOException;
+    public boolean fetchFile(File file) throws IOException;
     public void ftpFile() throws UnknownHostException;
-    public void logFile(String fileName);
+    public void logFileRead(String fileName);
+    public void logFileError(String fileName);
+    public void recoverState() throws IOException;
 }

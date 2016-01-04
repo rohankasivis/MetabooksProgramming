@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class ReadMail
+public class ReadMail implements ReadEmail
 {
     private Message message;
     public void readEmail(String email, String password)

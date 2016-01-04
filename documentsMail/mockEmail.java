@@ -28,9 +28,28 @@ public class MockEmail implements Email
         return true;
     }
 
+    public boolean sendMailWithAttachment(final String username, final String password, String recipient, String sender, String messageInfo, String subject, String path, String attachment)
+    {
+        usernames.put(username, password);
+        emails.put(subject, messageInfo);
+        recipients.put(sender, recipient);
+        attachments.add(attachment);
+        return true;
+    }
+
     public boolean emailSent(String messageInfo)
     {
         return emails.containsValue(messageInfo);
+    }
+
+    public Map<String, String> getEmails()
+    {
+        return emails;
+    }
+
+    public List<String> getAttachments()
+    {
+        return attachments;
     }
 
     public boolean containsAttachment(String attachment)

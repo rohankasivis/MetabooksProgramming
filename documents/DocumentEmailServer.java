@@ -14,7 +14,6 @@ public class DocumentEmailServer
     public static void main(String [] args)
     {
         Clock clock = new AccurateTime();
-        IFTPClient client = new FTPClient();
         Email email = new SMTPMail();
         Scanner input = new Scanner(System.in);
         System.out.print("Please enter the hour at which you want the files to be fetched from email: ");
@@ -23,6 +22,6 @@ public class DocumentEmailServer
         int minute = input.nextInt();
         System.out.print("\nPlease enter the second at the specified minute: ");
         int second = input.nextInt();
-        (new Thread(new DocumentStreamEmail(clock, client, email, hour, minute, second))).start();
+        (new Thread(new DocumentStreamEmail(clock, email, hour, minute, second))).start();
     }
 }

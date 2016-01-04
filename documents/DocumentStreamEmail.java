@@ -14,18 +14,21 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
 {
     private PrintWriter writer;
     private Clock time;
-    private IFTPClient client;
     private Email email;
-    private File[] listOfFiles;
 
     // newly added - private variables that indicate the time at which files will be placed in FTP server
     private int hourAtEmail;
     private int minuteAtEmail;
     private int secondAtEmail;
 
-    public DocumentStreamEmail(Clock time, IFTPClient client, Email email, int hourAtEmail, int minuteAtEmail, int secondAtEmail)
+    public DocumentStreamEmail(Clock time, Email email, int hourAtEmail, int minuteAtEmail, int secondAtEmail)
     {
-        super(time, client, email, hourAtEmail, minuteAtEmail, secondAtEmail);
+        super(time, null, email, hourAtEmail, minuteAtEmail, secondAtEmail);
+        this.time = time;
+        this.email = email;
+        this.hourAtEmail = hourAtEmail;
+        this.minuteAtEmail = minuteAtEmail;
+        this.secondAtEmail = secondAtEmail;
 
         try
         {
@@ -36,7 +39,8 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
         }
     }
 
-    public File[] recoverState() throws IOException
+    // todo - needs changes
+    public void recoverState() throws IOException
     {
         ReadMail mail = new ReadMail();
         List<File> files = mail.getAttachments();
@@ -47,8 +51,20 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
         }
 
         writer.println("Last time read: " + DateTime.now().getMonthOfYear() + "-" + DateTime.now().getDayOfMonth() + "-" + DateTime.now().getYear());
+    }
 
-        return file;
+    // this function checks to see whether the file has successfully been sent by checking the most recent email
+    public boolean fetchEmail(File file) throws IOException
+    {
+        ReadMail mail = new ReadMail();
+        List<File> files = mail.getAttachments();
+        if(files.contains(file))
+        {
+            logFileRead(file.getName());
+            return true;
+        }
+        else
+            return false;
     }
 
     public void run()
@@ -69,30 +85,26 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
         }
     }
 
-    public void createFile()
-    {
-
-    }
-
-    // overriding the original handleFile() method in order to process emails differently
+    // overriding the original handleFile() method in order to send/handle emails rather than process FTP input/output
+    // new changes - it now models documentStream
     public void handleFile() throws IOException, InterruptedException
     {
-        time.waitTill(6, 0, 0);
-        createFile();
-        email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "This is the email to process.", "Attachments");
-        listOfFiles = recoverState();
+        File file = super.createFile();
+        time.at(hourAtEmail, minuteAtEmail, secondAtEmail, (() -> {email.sendMailWithAttachment("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "This is the email to process.", "Attachments", "FTPFilesTesting " + super.fileName(), super.fileName());}));
+        recoverState();
 
-        if(fileExistsEmail())
-            readFile(new File("C:/FTPFilesTesting/" + fileName()));
+        // If the file exists within email and it is able to be fetched from email
+        if(fileExistsEmail() && fetchEmail(file))
+            super.logFileRead(file.getName());
         else
         {
             // otherwise, wait for 3 hours and see if the file will be updated by then
             int numTimesChecked = 1;
             while (numTimesChecked <= 3 && !fileExistsEmail())
             {
-                if (fileExistsEmail())
+                if (fileExistsEmail() && fetchEmail(file))
                 {
-                    readFile(new File("C:/FTPFilesTesting/" + fileName()));
+                    logFileRead(file.getName());
                     return;
                 }
                 else
@@ -103,7 +115,7 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
             // if it still does not exist, then log the file and send an email stating that the test failed
             if (!fileExistsEmail())
             {
-                logFile(fileName());
+                super.logFileError(file.getName());
                 email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "ftp failed to open", "Test result");
             }
         }
@@ -111,13 +123,9 @@ public class DocumentStreamEmail extends DocumentStream implements Runnable
 
     public boolean fileExistsEmail() throws IOException
     {
-        File [] files = recoverState();
-        for(int j = 0; j < files.length; j++)
-        {
-            if(files[j].getName().equals(fileName()))
-                return true;
-        }
+        ReadMail mail = new ReadMail();
+        List<File> files = mail.getAttachments();
 
-        return false;
+        return files.contains(new File(fileName()));
     }
 }

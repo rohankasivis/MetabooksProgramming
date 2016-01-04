@@ -67,7 +67,7 @@ public class DocumentStream implements Runnable, Stream
 
         for (int i = 0; i < list.length; i++)
         {
-
+            // todo - complete comparing dates and then decide how to read the files
         }
 
         // once done reading through the files, print the current date: this indicates as of now the last time the files have been read
@@ -140,7 +140,7 @@ public class DocumentStream implements Runnable, Stream
     }
 
     // a reference helper function to state the appropriate file name
-    private String fileName()
+    public String fileName()
     {
         int year = time.getYear();
         int month = time.getMonthOfYear();

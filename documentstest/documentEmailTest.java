@@ -2,7 +2,6 @@ package documentstest;
 
 import documents.DocumentStreamEmail;
 import documentsFtp.FTPClient;
-import documentsFtp.IFTPClient;
 import documentsMail.Email;
 import documentsMail.MockEmail;
 import documentsMail.SMTPMail;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
@@ -20,16 +20,14 @@ import static org.junit.runners.Parameterized.Parameters;
 public class documentEmailTest
 {
     private Clock clock;
-    private IFTPClient client;
     private Email email;
     private DocumentStreamEmail stream;
 
-    public documentEmailTest(Clock clock, IFTPClient client, Email email)
+    public documentEmailTest(Clock clock, Email email)
     {
         this.clock = clock;
-        this.client = client;
         this.email = email;
-        stream = new DocumentStreamEmail(clock, client, email, 6, 0, 0);    // for testing purposes just use 6 am
+        stream = new DocumentStreamEmail(clock, email, 6, 0, 0);    // for testing purposes just use 6 am
     }
 
     @Parameters
@@ -45,7 +43,7 @@ public class documentEmailTest
     public void test_file_exists_email() throws IOException
     {
         stream.createFile();
-        //stream.emailFile();
+        email.sendMailWithAttachment("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "Sending attachment here", "Test attachment exists", stream.fileName(), stream.fileName());
         assertEquals(true, stream.fileExistsEmail());
         System.out.println("@Test - the newly created file has been sent as an email");
     }
@@ -54,11 +52,48 @@ public class documentEmailTest
     public void test_files_exist_mock_email()
     {
         MockEmail email = new MockEmail();
-        email.sendMail("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "Sending attachment here", "Test attachment exists");
+        email.sendMailWithAttachment("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "Sending attachment here", "Test attachment exists", stream.fileName(), stream.fileName());
         assertEquals(true, email.containsAttachment(stream.fileName()));
         System.out.println("@Test - the emails containing the attachments are sent properly.");
     }
 
     // the next set of functions are test cases used to model an actual scenario
+    @Test
+    public void test_at_6() throws InterruptedException, IOException {
+        clock.at(5, 0, 0, (() -> {email.sendMailWithAttachment("guychill197@gmail.com", "gtarocks", "guychill197@gmail.com", "guychill197@gmail.com", "This is the email to process.", "Attachments", "FTPFilesTesting " + stream.fileName(), stream.fileName());}));
+        clock.at(6, 0, 0, (() -> {try {stream.fileExistsEmail();} catch (IOException e) {e.printStackTrace();}}));
 
+        assertEquals(true, stream.fileExistsEmail());
+        assertEquals(true, clock.getHour() == 6);
+        System.out.println("@Test - The clock has successfully emailed the file at 6 as planned.");
+    }
+
+    @Test
+    public void test_at_7() throws InterruptedException, IOException {
+        if (!stream.fileExistsFTP()) {
+            clock.at(7, 0, 0, (() -> {try {stream.fileExistsEmail();} catch (IOException e) {e.printStackTrace();}}));
+            assertEquals(true, stream.fileExistsEmail());
+            assertEquals(true, clock.getHour() == 7);
+            System.out.println("@Test - The clock has successfully emailed the file one hour later than planned.");
+        } else
+            System.out.println("@Test - This test need not be completed as the file has already been emailed.");
+    }
+
+    @Test
+    public void test_at_8() throws InterruptedException, IOException {
+        if (!stream.fileExistsFTP()) {
+            clock.at(8, 0, 0, (() -> {try {stream.fileExistsEmail();} catch (IOException e) {e.printStackTrace();}}));
+            assertEquals(true, stream.fileExistsEmail());
+            assertEquals(true, clock.getHour() == 8);
+            System.out.println("@Test - The clock has successfully emailed the file two hours two hours later than planned.");
+        } else
+            System.out.println("@Test - This test need not be completed as the file has already been emailed.");
+    }
+
+    // this is the main and final test that puts everything together
+    @Test
+    public void set_up() throws IOException, InterruptedException {
+        stream.handleFile();
+        System.out.println("@Test - This test simply runs processFiles, the key method of documentStream.");
+    }
 }
